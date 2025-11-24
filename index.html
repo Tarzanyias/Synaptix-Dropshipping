@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synaptix Official Store™</title>
+    <title>Synaptix Official Store™</title><script 
+  src="https://www.paypal.com/sdk/js?client-id=BAAAlaRxA3KbFZr2em3TUeirbZdGSngwcyHMItxDS_YPYIFuSH1BfIKdY5wRjmhJMC0XvPmC7t0Lh5S57c&components=hosted-buttons&enable-funding=venmo&currency=USD">
+</script>
     
     <!-- Favicon and Logo Links --><link rel="icon" type="image/png" href="Images/Favicon.png">
     <link rel="apple-touch-icon" href="Images/Logo.png">
@@ -23,6 +25,11 @@
             display: none;
         }
     </style>
+
+    <!-- PayPal SDK Script (Part 1 from image) -->
+    <!-- NOTE: You must replace 'YOUR_PAYPAL_CLIENT_ID' with your actual client ID for the button to function. -->
+    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&enable-funding=venmo&currency=USD"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -36,6 +43,8 @@
         }
         
         let cartItems = [];
+        let paypalRenderAttempts = 0;
+        const MAX_PAYPAL_ATTEMPTS = 5;
 
         function loadCart() {
             try {
@@ -91,7 +100,7 @@
         }
 
         /**
-         * UPDATED: Enforces a maximum quantity of 1 per unique product.
+         * Enforces a maximum quantity of 1 per unique product.
          */
         function addToCart(product) {
             const existingItem = cartItems.find(item => item.name === product.name);
@@ -119,10 +128,20 @@
             }
         }
 
+        /**
+         * Renders the cart content and resets the checkout state (hiding PayPal button).
+         */
         function renderCart() {
             const cartContent = document.getElementById('cart-content');
             const cartSubtotal = document.getElementById('cart-subtotal');
             const checkoutButton = document.getElementById('checkout-button');
+            const loadingSpinner = document.getElementById('checkout-loading');
+            const paypalContainer = document.getElementById('paypal-button-container');
+
+            // Reset checkout state every time the cart is rendered
+            if (checkoutButton) checkoutButton.classList.remove('hidden');
+            if (loadingSpinner) loadingSpinner.classList.add('hidden');
+            if (paypalContainer) paypalContainer.classList.add('hidden');
             
             if (!cartContent || !cartSubtotal || !checkoutButton) return;
             
@@ -209,8 +228,93 @@
         }
 
         /**
+         * Function to render the PayPal button using the user's hosted button ID.
+         * Includes exponential backoff retry logic.
+         */
+        function renderPayPalButton() {
+            const container = document.getElementById('paypal-button-container');
+            
+            // Check if PayPal SDK is loaded and container is available
+            if (typeof paypal !== 'undefined' && container) {
+                console.log("PayPal SDK found. Rendering hosted button.");
+                
+                // Clear any previous button instance
+                container.innerHTML = '';
+                
+                try {
+                    // Render the Hosted Button using the ID from the user's image
+                    // Hosted Button ID from the user's image: ZBXQ4GVARLZA4
+                    paypal.HostedButtons({
+                        hostedButtonId: "ZBXQ4GVARLZA4", 
+                    }).render("#paypal-button-container");
+
+                    console.log("PayPal Hosted Button rendered successfully.");
+                    
+                } catch (error) {
+                    console.error("Error rendering PayPal Hosted Button:", error);
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'text-red-600 text-sm mt-2 text-center';
+                    errorDiv.textContent = 'Payment service error. Please refresh and try again.';
+                    container.appendChild(errorDiv);
+                }
+
+            } else {
+                paypalRenderAttempts++;
+                if (paypalRenderAttempts < MAX_PAYPAL_ATTEMPTS) {
+                    // Exponential backoff: 0.5s, 1s, 2s, 4s, 8s
+                    const delay = Math.pow(2, paypalRenderAttempts) * 500; 
+                    console.warn(`PayPal SDK not ready (Attempt ${paypalRenderAttempts}/${MAX_PAYPAL_ATTEMPTS}). Retrying in ${delay}ms...`);
+                    setTimeout(renderPayPalButton, delay);
+                } else {
+                    console.error("Failed to load PayPal SDK after multiple attempts. Check network connection and client ID.");
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'text-red-600 text-sm mt-2 text-center';
+                    errorDiv.textContent = 'Error: Failed to load PayPal service after multiple attempts.';
+                    container.appendChild(errorDiv);
+                }
+            }
+        }
+
+        /**
+         * Handles the checkout process: hides the main button, shows loading, then renders PayPal.
+         */
+        async function startCheckout() {
+            if (cartItems.length === 0) {
+                showFeedbackMessage("Your cart is empty! Add items before checking out.");
+                return;
+            }
+
+            const checkoutButton = document.getElementById('checkout-button');
+            const loadingSpinner = document.getElementById('checkout-loading');
+            const paypalContainer = document.getElementById('paypal-button-container');
+            
+            // 1. Hide the checkout button
+            console.log("Starting checkout: Hiding button.");
+            if (checkoutButton) checkoutButton.classList.add('hidden');
+
+            // 2. Show loading sign
+            console.log("Showing loading spinner.");
+            if (loadingSpinner) loadingSpinner.classList.remove('hidden');
+
+            // Reset attempt counter
+            paypalRenderAttempts = 0;
+
+            // 3. Simulate network/processing delay (2 seconds)
+            console.log("Simulating secure processing delay (2 seconds)...");
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // 4. Hide loading sign
+            console.log("Delay complete. Hiding loading spinner.");
+            if (loadingSpinner) loadingSpinner.classList.add('hidden');
+
+            // 5. Show container and render the PayPal button
+            console.log("Showing PayPal container and initiating render.");
+            if (paypalContainer) paypalContainer.classList.remove('hidden');
+            renderPayPalButton();
+        }
+
+        /**
          * New function to handle form submission via FormSubmit's AJAX endpoint.
-         * This sends the email internally without opening the user's email client.
          */
         async function submitContactForm(event) {
             event.preventDefault(); // Prevent default browser form submission
@@ -224,10 +328,10 @@
             const email = document.getElementById('contact-email').value;
             const message = document.getElementById('contact-message').value;
             
-            // --- UPDATED to use the provided FormSubmit hash/string ---
+            // --- FormSubmit hash used for the API endpoint ---
             const formSubmitHash = '80f7e02a47ee4e2ff6ffd76072398492';
             const apiUrl = `https://formsubmit.co/ajax/${formSubmitHash}`;
-            // ---------------------------------------------------------
+            // -------------------------------------------------
 
             // 2. Set loading state
             button.disabled = true;
@@ -536,9 +640,26 @@
                 <span>Subtotal</span>
                 <span id="cart-subtotal">$0.00</span>
             </div>
+            
+            <!-- PayPal Button Container (Initially Hidden) -->
+            <div id="paypal-button-container" class="hidden">
+                <!-- PayPal button will be rendered here by the script -->
+            </div>
+
+            <!-- Loading Spinner (Initially Hidden) -->
+            <div id="checkout-loading" class="hidden flex justify-center items-center py-4">
+                <!-- Simple Tailwind CSS Spinner -->
+                <svg class="animate-spin h-6 w-6 text-primary-teal" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="ml-3 text-gray-700 font-medium">Preparing secure checkout...</span>
+            </div>
+
+            <!-- Original Checkout Button (Now calls startCheckout) -->
             <button id="checkout-button" 
                     disabled 
-                    onclick="window.location.href = 'Pages/Checkout.html';"
+                    onclick="startCheckout();"
                     class="w-full bg-primary-teal text-white font-bold py-3 rounded-lg shadow-md hover:bg-teal-600 transition duration-300 opacity-50 cursor-not-allowed">
                 Checkout (0 Items)
             </button>
