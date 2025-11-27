@@ -37,8 +37,8 @@
     </style>
 
     <!-- PayPal SDK Script (Part 1 from image) -->
-    <!-- NOTE: You must replace 'YOUR_PAYPAL_CLIENT_ID' with your actual client ID for the button to function. -->
-    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&enable-funding=venmo&currency=USD"></script>
+    <!-- NOTE: This URL now uses the specific client-id and parameters provided in the user's image. -->
+    <script src="https://www.paypal.com/sdk/js?client-id=BAAA1aARxA3KbFZr2em3TUeirbZDGSngWcyHMiTXDS_YPYIFUSH18FlKdY5wRJmhJMC0XVPMC7t0Lh5S5S7c&buttons&enable-funding=venmo&currency=USD"></script>
 
     <script>
         tailwind.config = {
@@ -56,9 +56,7 @@
         let paypalRenderAttempts = 0;
         const MAX_PAYPAL_ATTEMPTS = 5;
         
-        // --- UPDATED SALE PRICE CONSTANT ---
-        const AI_BUD_PRICE = 24.99; // Updated to $24.99
-        // --------------------------------
+        const AI_BUD_PRICE = 24.99; // Sale Price
 
         function loadCart() {
             try {
@@ -120,7 +118,7 @@
             // Ensure the correct sale price is used when adding to cart
             product.price = AI_BUD_PRICE; 
 
-            // IMPORTANT: Ensure the name is consistent here for all products
+            // IMPORTANT: Ensure the name is consistent here for all products ("AI Translator Buds™")
             const standardizedName = 'AI Translator Buds™';
             const itemToAdd = { ...product, name: standardizedName, qty: 1 };
 
@@ -153,10 +151,9 @@
          * Function to dismiss the cart discount bubble and save the state.
          */
         function dismissDiscountBubble(productName) {
-            // Set flag in localStorage
+            // Set flag in localStorage so the bubble only appears the first time the cart is opened
             localStorage.setItem('synaptixDiscountBubbleDismissed', 'true');
-            // Find the specific bubble element and make it disappear before re-rendering
-            // Using a simple delay since the item's name is fixed
+            
             const bubble = document.getElementById('discount-bubble');
             if (bubble) {
                 bubble.classList.add('opacity-0', 'scale-0');
@@ -198,7 +195,7 @@
                 checkoutButton.classList.add('opacity-50', 'cursor-not-allowed');
             } else {
                 cartContent.innerHTML = cartItems.map(item => {
-                    // Force using the latest price for the calculation in case the stored price is old
+                    // Force using the latest price for the calculation
                     const currentPrice = AI_BUD_PRICE; 
                     const itemTotal = currentPrice * item.qty;
                     total += itemTotal;
@@ -292,7 +289,6 @@
 
         /**
          * Function to render the PayPal button using the user's hosted button ID.
-         * Includes exponential backoff retry logic.
          */
         function renderPayPalButton() {
             const container = document.getElementById('paypal-button-container');
@@ -305,8 +301,7 @@
                 container.innerHTML = '';
                 
                 try {
-                    // Render the Hosted Button using the ID from the user's image
-                    // Hosted Button ID from the user's image: ZBXQ4GVARLZA4
+                    // Render the Hosted Button using the ID from the user's image (Part 2: ZBXQ4GVARLZA4)
                     paypal.HostedButtons({
                         hostedButtonId: "ZBXQ4GVARLZA4", 
                     }).render("#paypal-button-container");
@@ -324,7 +319,7 @@
             } else {
                 paypalRenderAttempts++;
                 if (paypalRenderAttempts < MAX_PAYPAL_ATTEMPTS) {
-                    // Exponential backoff: 0.5s, 1s, 2s, 4s, 8s
+                    // Exponential backoff
                     const delay = Math.pow(2, paypalRenderAttempts) * 500; 
                     console.warn(`PayPal SDK not ready (Attempt ${paypalRenderAttempts}/${MAX_PAYPAL_ATTEMPTS}). Retrying in ${delay}ms...`);
                     setTimeout(renderPayPalButton, delay);
