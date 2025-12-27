@@ -43,7 +43,6 @@
         #cart-content::-webkit-scrollbar-thumb { background: #000; }
         .paypal-wrapper { width: 100%; min-height: 50px; }
         
-        /* Account Dropdown */
         .account-dropdown {
             display: none;
             position: absolute;
@@ -52,11 +51,34 @@
             background: white;
             border: 1px solid black;
             padding: 1rem;
-            min-width: 200px;
+            min-width: 220px;
             z-index: 100;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
         .account-container:hover .account-dropdown {
             display: block;
+        }
+        
+        #top-banner {
+            transition: all 0.3s ease;
+        }
+        
+        .header-main {
+            transition: top 0.3s ease;
+        }
+
+        /* Fixed Cart Button Interaction */
+        .cart-btn-active {
+            transform: scale(0.95);
+        }
+
+        /* Base64 Icon Style */
+        .cart-icon {
+            width: 18px;
+            height: 18px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z' /%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
         }
     </style>
 
@@ -75,6 +97,13 @@
             loadCart();
             checkPortalAccess();
             showPage('home-page');
+        }
+
+        function closeBanner() {
+            const banner = document.getElementById('top-banner');
+            const header = document.getElementById('header-main');
+            if (banner) banner.style.display = 'none';
+            if (header) header.style.top = '0';
         }
 
         function handleShowcaseClick() {
@@ -130,7 +159,13 @@
             const badge = document.getElementById('cart-count-badge');
             if (badge) {
                 badge.textContent = `(${totalItems})`;
-                badge.classList.toggle('opacity-0', totalItems === 0);
+                if (totalItems > 0) {
+                    badge.classList.remove('opacity-0');
+                    badge.classList.add('opacity-100');
+                } else {
+                    badge.classList.add('opacity-0');
+                    badge.classList.remove('opacity-100');
+                }
             }
         }
 
@@ -224,8 +259,13 @@
         function toggleCart(forceOpen = false) {
             const sidebar = document.getElementById('cart-sidebar');
             const overlay = document.getElementById('cart-overlay');
-            if (forceOpen) { sidebar.classList.remove('translate-x-full'); overlay.classList.remove('hidden'); }
-            else { sidebar.classList.toggle('translate-x-full'); overlay.classList.toggle('hidden'); }
+            if (forceOpen) { 
+                sidebar.classList.remove('translate-x-full'); 
+                overlay.classList.remove('hidden'); 
+            } else { 
+                sidebar.classList.toggle('translate-x-full'); 
+                overlay.classList.toggle('hidden'); 
+            }
         }
 
         function handleImageError(img, productName) {
@@ -253,13 +293,14 @@
         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
     </a>
 
-    <!-- SALE BANNER -->
-    <div id="top-banner" class="bg-black text-white py-2 px-4 text-[11px] font-bold tracking-[0.2em] sticky top-0 z-50 uppercase border-b border-white/10 flex items-center justify-center">
-        <div class="text-center">Flash Sale Active <span class="x-mark italic text-sm mx-2">X</span> Inventory Levels High</div>
+    <!-- SALE BANNER WITH CLOSE BUTTON -->
+    <div id="top-banner" class="bg-black text-white py-2 px-6 text-[11px] font-bold tracking-[0.2em] sticky top-0 z-50 uppercase border-b border-white/10 flex items-center justify-center">
+        <button onclick="closeBanner()" class="absolute left-4 text-white hover:text-red-500 transition-colors text-sm font-black">✕</button>
+        <div class="text-center px-8">Flash Sale Active <span class="x-mark italic text-sm mx-2">X</span> Inventory Levels High</div>
     </div>
 
     <!-- HEADER -->
-    <header class="border-b sticky top-8 z-40 bg-white/80 backdrop-blur-md">
+    <header id="header-main" class="header-main border-b sticky top-8 z-40 bg-white/80 backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-12">
                 <a href="#" onclick="showPage('home-page'); return false;" class="flex items-center">
@@ -271,18 +312,25 @@
                     <a href="#" data-nav="contact-page" onclick="showPage('contact-page'); return false;" class="nav-link hover:text-black transition">Support</a>
                 </nav>
             </div>
+            
             <div class="flex items-center space-x-4">
-                <!-- Account Dropdown -->
-                <div class="relative account-container h-20 flex items-center px-4 cursor-pointer group">
-                    <svg class="w-6 h-6 text-gray-400 group-hover:text-black transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                    <div class="account-dropdown shadow-xl">
-                        <p class="text-[10px] font-black uppercase text-gray-400 mb-4 border-b pb-2">Account Management</p>
-                        <button onclick="clearSiteCache()" class="w-full text-left text-[11px] font-bold uppercase tracking-widest text-red-600 hover:bg-red-50 p-2 transition">Delete Cache / Sign Out</button>
+                <!-- Account Container -->
+                <div class="relative account-container h-20 flex items-center px-2 cursor-pointer group">
+                    <div class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                        <svg class="w-6 h-6 text-gray-400 group-hover:text-black transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    </div>
+                    <div class="account-dropdown border-2 border-black">
+                        <p class="text-[10px] font-black uppercase text-gray-400 mb-4 border-b border-gray-100 pb-2">Account Management</p>
+                        <button onclick="clearSiteCache()" class="w-full text-left text-[11px] font-black uppercase tracking-widest text-red-600 hover:bg-red-50 p-3 transition border border-transparent hover:border-red-200 rounded">
+                            Delete Cache / Reset
+                        </button>
                     </div>
                 </div>
 
-                <button onclick="toggleCart()" class="relative group flex items-center bg-black text-white px-4 py-2 rounded-full">
-                    <span class="text-[10px] font-black uppercase tracking-widest mr-2">Cart</span>
+                <!-- Cart Button with Base64 SVG Icon -->
+                <button id="cart-btn" onclick="toggleCart()" class="flex items-center bg-black text-white h-10 px-5 rounded-full hover:bg-gray-800 active:scale-95 transition-all shadow-lg group">
+                    <div class="cart-icon mr-2 group-hover:scale-110 transition-transform"></div>
+                    <span class="text-[10px] font-black uppercase tracking-[0.2em] mr-1">Cart</span>
                     <span id="cart-count-badge" class="text-[10px] font-black opacity-0 transition-opacity">(0)</span>
                 </button>
             </div>
@@ -290,6 +338,7 @@
     </header>
 
     <main>
+        <!-- Home Page Content -->
         <div id="home-page" class="page-view">
             <section class="relative h-[80vh] bg-gray-50 flex items-center px-6 overflow-hidden">
                 <div class="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -328,7 +377,7 @@
             </section>
         </div>
 
-        <!-- SHOP ALL PAGE -->
+        <!-- Shop All Page -->
         <div id="shop-all-page" class="page-view hidden px-6 py-20 max-w-7xl mx-auto">
             <div class="flex flex-col md:flex-row gap-12">
                 <aside class="w-full md:w-64 flex-shrink-0">
@@ -347,7 +396,7 @@
             </div>
         </div>
 
-        <!-- ITEM DETAILS -->
+        <!-- Product Details -->
         <div id="item-details-page" class="page-view hidden py-24 px-6 max-w-7xl mx-auto">
             <div class="flex flex-col md:flex-row gap-16">
                 <div class="md:w-1/2 bg-gray-50 aspect-square flex items-center justify-center border overflow-hidden">
@@ -368,7 +417,7 @@
             </div>
         </div>
 
-        <!-- SUPPORT -->
+        <!-- Support Page -->
         <div id="contact-page" class="page-view hidden py-24 px-6 max-w-2xl mx-auto">
             <h1 class="text-5xl font-black uppercase tracking-tighter mb-12">Global Support</h1>
             <form class="space-y-8" onsubmit="event.preventDefault(); alert('Request logged.');">
