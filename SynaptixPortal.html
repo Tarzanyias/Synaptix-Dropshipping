@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Listings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .product-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .image-container {
+            height: 220px;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            padding: 1rem;
+        }
+
+        .profit-badge {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+    </style>
+</head>
+<body class="p-6 md:p-12">
+
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-12 text-center">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">Inventory & Profit Analysis</h1>
+            <p class="text-gray-600">Sourcing costs, retail comparisons, and projected margins.</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <!-- AirPods Card -->
+            <div class="product-card bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col">
+                <div class="image-container mb-6">
+                    <img src="https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/airpods-pro-3-hero-select-202509?wid=976&hei=916&fmt=jpeg&qlt=90&.v=cmp4MmZ6OWxOeHNNTXh4SzlBNUpEb1RucE9zZTI5eEREaWZpY29lSld3eWVDYXovZDMyN1dXU211bjZoVlVUcWJGcXNRQnFCV0w3WVRjTExvdm1ic1YxRUxFRmRlWDBITzhnRmZ5OTRmaVdKTExiOEFsRmxtQ2Nua0tRSC83MkI" alt="AirPods">
+                </div>
+                
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800">AirPods</h2>
+                        <p class="text-sm text-gray-500">Wireless Audio</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="block text-xs text-gray-400 uppercase font-bold">Cost</span>
+                        <span class="text-xl font-bold text-gray-900">$18</span>
+                    </div>
+                </div>
+
+                <!-- Financials -->
+                <div class="space-y-2 mb-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500">Retail Price:</span>
+                        <span class="text-gray-700 font-medium line-through">$129.00</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500">Market "Good Deal":</span>
+                        <span class="text-blue-600 font-bold">$65.00</span>
+                    </div>
+                    <div class="pt-2 border-t border-gray-200 flex justify-between items-center">
+                        <span class="text-sm font-bold text-gray-900">Est. Profit:</span>
+                        <span class="text-emerald-600 font-bold">+$47.00</span>
+                    </div>
+                </div>
+
+                <a href="https://www.dhgate.com/product/p9-pro-max-wireless-over-ear-bluetooth-adjustable/954740614.html?f=bm%7Caff%7Cyfaf%7C1300509%7C1300509_1314907_180799%7CS694ead98e4b034c801a9bdb5%7C&skuId=1439750286973419580&stockCountry=US" target="_blank" class="mt-auto w-full text-center bg-black text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors">
+                    Find Product
+                </a>
+            </div>
+
+            <!-- AirPods Max Card -->
+            <div class="product-card bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col">
+                <div class="image-container mb-6">
+                    <img src="https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/airpods-max-select-202409-midnight_FV1?wid=976&hei=916&fmt=jpeg&qlt=90&.v=azQxRkVJKzd6V3J0aGNqWFhLMzBmdmVWNWdHYnp5cHkwMldsSElEOHpyd0cyWGRFNFZ5QTk3bFlteis2Q2NNaWpENFdPQTN0TWQ4ejhtTWxrUHVDeElGZGV2eWhZaEljUzNSeDlxcDVuWGszbTFldUtUQzN0ellEWHZ3UUFYSS8" alt="AirPods Max">
+                </div>
+                
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800">AirPods Max</h2>
+                        <p class="text-sm text-gray-500">Midnight Black</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="block text-xs text-gray-400 uppercase font-bold">Cost</span>
+                        <span class="text-xl font-bold text-gray-900">$80</span>
+                    </div>
+                </div>
+
+                <!-- Financials -->
+                <div class="space-y-2 mb-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500">Retail Price:</span>
+                        <span class="text-gray-700 font-medium line-through">$549.00</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500">Market "Good Deal":</span>
+                        <span class="text-blue-600 font-bold">$220.00</span>
+                    </div>
+                    <div class="pt-2 border-t border-gray-200 flex justify-between items-center">
+                        <span class="text-sm font-bold text-gray-900">Est. Profit:</span>
+                        <span class="text-emerald-600 font-bold">+$140.00</span>
+                    </div>
+                </div>
+
+                <a href="https://www.dhgate.com/product/for-new-apple-airpods-max-2-gen-metal-wireless/1073025485.html?dspm=pcen.sp.list.3.WH6fOCJVA73Z3GLIlKy8&resource_id=1073025485&scm_id=yf.prodauto.28.S8aaafbe698ead91e0198eed316691d2b-Q1-R0-Ppl6o3engrx-Ggam3qw7kjr-Aother-B100.4-A9119_C1921_D7_E1135x0i1033x1i1150x0i42x4_G5_I2_J0_K0_Nah_O0_Rw1iUUuYdkhc_S7_U223_V282.IhqunrhSairpodsHairpodXmaxBt7vuwlC5qO-EssJ0Dpf&skuId=1423125001285775370&stockCountry=US" target="_blank" class="mt-auto w-full text-center bg-black text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors">
+                    Find Product
+                </a>
+            </div>
+
+            <!-- Air Force 1 Card -->
+            <div class="product-card bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col">
+                <div class="image-container mb-6">
+                    <img src="https://static.nike.com/a/images/t_web_pdp_936_v2/f_auto/b7d9211c-26e7-431a-ac24-b0540fb3c00f/AIR+FORCE+1+%2707.png" alt="Air Force 1">
+                </div>
+                
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800">Air Force 1</h2>
+                        <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Triple White</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="block text-xs text-gray-400 uppercase font-bold">Cost</span>
+                        <span class="text-xl font-bold text-gray-900">$30</span>
+                    </div>
+                </div>
+
+                <!-- Financials -->
+                <div class="space-y-2 mb-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500">Retail Price:</span>
+                        <span class="text-gray-700 font-medium line-through">$115.00</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500">Market "Good Deal":</span>
+                        <span class="text-blue-600 font-bold">$75.00</span>
+                    </div>
+                    <div class="pt-2 border-t border-gray-200 flex justify-between items-center">
+                        <span class="text-sm font-bold text-gray-900">Est. Profit:</span>
+                        <span class="text-emerald-600 font-bold">+$45.00</span>
+                    </div>
+                </div>
+
+                <a href="https://www.dhgate.com/product/4-basketball-shoes-for-men-women-4s-sneaker/1035908503.html?f=bm%7Caff%7Cyfaf%7C1300509%7C1300509_1314907_180799%7CS694eacf5e4b034c822836895%7C&skuId=1408023097776902249" target="_blank" class="mt-auto w-full text-center bg-black text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors">
+                    Find Product
+                </a>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
