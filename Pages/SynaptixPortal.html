@@ -3,175 +3,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Listings</title>
+    <title>Product Listings | Inventory & Profit Analysis</title>
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="../Images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
+            background-color: #f8fafc;
         }
 
         .product-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
         }
 
         .image-container {
-            height: 220px;
-            border-radius: 0.75rem;
+            height: 240px;
+            border-radius: 1rem;
             overflow: hidden;
             background-color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        .product-card:hover .image-container {
+            background-color: #f1f5f9;
         }
 
         .image-container img {
-            max-width: 100%;
-            max-height: 100%;
+            max-width: 85%;
+            max-height: 85%;
             object-fit: contain;
-            padding: 1rem;
+            filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04));
         }
 
-        .profit-badge {
-            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        .custom-gradient {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .card-blur {
+            backdrop-filter: blur(8px);
         }
     </style>
 </head>
-<body class="p-6 md:p-12">
+<body class="antialiased text-slate-900 p-4 md:p-8 lg:p-12">
 
-    <div class="max-w-6xl mx-auto">
-        <header class="mb-12 text-center">
-            <h1 class="text-4xl font-bold text-gray-900 mb-2">Inventory & Profit Analysis</h1>
-            <p class="text-gray-600">Sourcing costs, retail comparisons, and projected margins.</p>
+    <div class="max-w-7xl mx-auto">
+        <!-- Header Section -->
+        <header class="mb-16 text-center space-y-4">
+            <div class="inline-flex items-center px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-700 text-sm font-semibold tracking-wide uppercase">
+                2026 Market Insights
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
+                Inventory & Profit <span class="text-emerald-600">Analysis</span>
+            </h1>
+            <p class="text-lg text-slate-500 max-w-2xl mx-auto">
+                Detailed comparison of sourcing costs versus retail market value to identify high-margin opportunities for the current year.
+            </p>
         </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Product Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
             
-            <!-- AirPods Card -->
-            <div class="product-card bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col">
-                <div class="image-container mb-6">
-                    <img src="https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/airpods-pro-3-hero-select-202509?wid=976&hei=916&fmt=jpeg&qlt=90&.v=cmp4MmZ6OWxOeHNNTXh4SzlBNUpEb1RucE9zZTI5eEREaWZpY29lSld3eWVDYXovZDMyN1dXU211bjZoVlVUcWJGcXNRQnFCV0w3WVRjTExvdm1ic1YxRUxFRmRlWDBITzhnRmZ5OTRmaVdKTExiOEFsRmxtQ2Nua0tRSC83MkI" alt="AirPods">
+            <!-- Hellstar Hoodie Card -->
+            <div class="product-card bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col relative">
+                <div class="absolute top-8 right-8 z-10">
+                    <span class="px-3 py-1 bg-emerald-500 text-white text-xs font-bold rounded-full shadow-lg">Ultra High Margin</span>
                 </div>
                 
-                <div class="flex justify-between items-start mb-4">
+                <div class="image-container mb-8">
+                    <img src="../Images/pr4.png" alt="Hellstar Hoodie" onerror="this.src='https://placehold.co/400x400/f1f5f9/64748b?text=Hellstar+Hoodie'">
+                </div>
+                
+                <div class="flex justify-between items-end mb-6">
                     <div>
-                        <h2 class="text-xl font-bold text-gray-800">AirPods</h2>
-                        <p class="text-sm text-gray-500">Wireless Audio</p>
+                        <h2 class="text-2xl font-bold text-slate-800 leading-tight">Hellstar Hoodie</h2>
+                        <p class="text-sm font-medium text-slate-400 uppercase tracking-widest mt-1">Streetwear</p>
                     </div>
                     <div class="text-right">
-                        <span class="block text-xs text-gray-400 uppercase font-bold">Cost</span>
-                        <span class="text-xl font-bold text-gray-900">$18</span>
+                        <span class="block text-[10px] text-slate-400 uppercase font-bold tracking-tighter">Unit Cost</span>
+                        <span class="text-2xl font-black text-slate-900">$37</span>
                     </div>
                 </div>
 
-                <!-- Financials -->
-                <div class="space-y-2 mb-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">Retail Price:</span>
-                        <span class="text-gray-700 font-medium line-through">$129.00</span>
+                <div class="space-y-3 mb-8 p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500">Retail MSRP:</span>
+                        <span class="text-slate-400 font-medium line-through decoration-slate-300">$350.00</span>
                     </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">Market "Good Deal":</span>
-                        <span class="text-blue-600 font-bold">$65.00</span>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500 italic font-medium">Quick Resell:</span>
+                        <span class="text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-md">$245.00</span>
                     </div>
-                    <div class="pt-2 border-t border-gray-200 flex justify-between items-center">
-                        <span class="text-sm font-bold text-gray-900">Est. Profit:</span>
-                        <span class="text-emerald-600 font-bold">+$47.00</span>
+                    <div class="pt-3 border-t border-slate-200 flex justify-between items-center">
+                        <span class="text-sm font-bold text-slate-700 uppercase">Est. Profit:</span>
+                        <span class="text-xl font-bold text-emerald-600">+$208.00</span>
                     </div>
                 </div>
 
-                <a href="https://www.dhgate.com/product/p9-pro-max-wireless-over-ear-bluetooth-adjustable/954740614.html?f=bm%7Caff%7Cyfaf%7C1300509%7C1300509_1314907_180799%7CS694ead98e4b034c801a9bdb5%7C&skuId=1439750286973419580&stockCountry=US" target="_blank" class="mt-auto w-full text-center bg-black text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors">
-                    Find Product
+                <a href="https://www.superbuy.com/en/page/buy/?nTag=Home-search&from=search-input&url=https%3A%2F%2Fx.yupoo.com%2Fexternal%3Furl%3Dhttps%25253A%25252F%25252Fweidian.com%25252Fitem.html%25253FitemID%25253D7500997082%252526amp%25253Bspider_token%25253D9dfe" target="_blank" class="mt-auto w-full inline-flex justify-center items-center gap-2 bg-slate-900 text-white py-4 rounded-xl font-semibold hover:bg-slate-800 transition-all active:scale-[0.98]">
+                    Source Details
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                </a>
+            </div>
+
+            <!-- Sp5der Hoodie Card -->
+            <div class="product-card bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col relative">
+                <div class="image-container mb-8">
+                    <img src="../Images/pr5.png" alt="Sp5der Hoodie" onerror="this.src='https://placehold.co/400x400/f1f5f9/64748b?text=Sp5der+Hoodie'">
+                </div>
+                
+                <div class="flex justify-between items-end mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800 leading-tight">Sp5der Hoodie</h2>
+                        <p class="text-sm font-medium text-slate-400 uppercase tracking-widest mt-1">Streetwear</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="block text-[10px] text-slate-400 uppercase font-bold tracking-tighter">Unit Cost</span>
+                        <span class="text-2xl font-black text-slate-900">$39</span>
+                    </div>
+                </div>
+
+                <div class="space-y-3 mb-8 p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500">Retail MSRP:</span>
+                        <span class="text-slate-400 font-medium line-through decoration-slate-300">$275.00</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500 italic font-medium">Quick Resell:</span>
+                        <span class="text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-md">$195.00</span>
+                    </div>
+                    <div class="pt-3 border-t border-slate-200 flex justify-between items-center">
+                        <span class="text-sm font-bold text-slate-700 uppercase">Est. Profit:</span>
+                        <span class="text-xl font-bold text-emerald-600">+$156.00</span>
+                    </div>
+                </div>
+
+                <a href="https://www.superbuy.com/en/page/buy/?nTag=Home-search&from=search-input&url=https%3A%2F%2Fitem.taobao.com%2Fitem.htm%3Fid%3D844748107986" target="_blank" class="mt-auto w-full inline-flex justify-center items-center gap-2 bg-slate-900 text-white py-4 rounded-xl font-semibold hover:bg-slate-800 transition-all active:scale-[0.98]">
+                    Source Details
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                </a>
+            </div>
+
+            <!-- AirPods Card -->
+            <div class="product-card bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col relative">
+                <div class="absolute top-8 right-8 z-10">
+                    <span class="px-3 py-1 bg-emerald-500 text-white text-xs font-bold rounded-full shadow-lg">High Margin</span>
+                </div>
+                
+                <div class="image-container mb-8">
+                    <img src="../Images/pr1.png" alt="AirPods Pro" onerror="this.src='https://placehold.co/400x400/f1f5f9/64748b?text=AirPods+Pro'">
+                </div>
+                
+                <div class="flex justify-between items-end mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800 leading-tight">AirPods</h2>
+                        <p class="text-sm font-medium text-slate-400 uppercase tracking-widest mt-1">Wireless Audio</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="block text-[10px] text-slate-400 uppercase font-bold tracking-tighter">Unit Cost</span>
+                        <span class="text-2xl font-black text-slate-900">$18</span>
+                    </div>
+                </div>
+
+                <div class="space-y-3 mb-8 p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500">Retail MSRP:</span>
+                        <span class="text-slate-400 font-medium line-through decoration-slate-300">$129.00</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500 italic font-medium">Quick Resell:</span>
+                        <span class="text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-md">$65.00</span>
+                    </div>
+                    <div class="pt-3 border-t border-slate-200 flex justify-between items-center">
+                        <span class="text-sm font-bold text-slate-700 uppercase">Est. Profit:</span>
+                        <span class="text-xl font-bold text-emerald-600">+$47.00</span>
+                    </div>
+                </div>
+
+                <a href="https://www.dhgate.com/product/p9-pro-max-wireless-over-ear-bluetooth-adjustable/954740614.html" target="_blank" class="mt-auto w-full inline-flex justify-center items-center gap-2 bg-slate-900 text-white py-4 rounded-xl font-semibold hover:bg-slate-800 transition-all active:scale-[0.98]">
+                    Source Details
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                 </a>
             </div>
 
             <!-- AirPods Max Card -->
-            <div class="product-card bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col">
-                <div class="image-container mb-6">
-                    <img src="https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/airpods-max-select-202409-midnight_FV1?wid=976&hei=916&fmt=jpeg&qlt=90&.v=azQxRkVJKzd6V3J0aGNqWFhLMzBmdmVWNWdHYnp5cHkwMldsSElEOHpyd0cyWGRFNFZ5QTk3bFlteis2Q2NNaWpENFdPQTN0TWQ4ejhtTWxrUHVDeElGZGV2eWhZaEljUzNSeDlxcDVuWGszbTFldUtUQzN0ellEWHZ3UUFYSS8" alt="AirPods Max">
+            <div class="product-card bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col relative">
+                <div class="image-container mb-8">
+                    <img src="../Images/pr2.png" alt="AirPods Max" onerror="this.src='https://placehold.co/400x400/f1f5f9/64748b?text=AirPods+Max'">
                 </div>
                 
-                <div class="flex justify-between items-start mb-4">
+                <div class="flex justify-between items-end mb-6">
                     <div>
-                        <h2 class="text-xl font-bold text-gray-800">AirPods Max</h2>
-                        <p class="text-sm text-gray-500">Midnight Black</p>
+                        <h2 class="text-2xl font-bold text-slate-800 leading-tight">AirPods Max</h2>
+                        <p class="text-sm font-medium text-slate-400 uppercase tracking-widest mt-1">Midnight Black</p>
                     </div>
                     <div class="text-right">
-                        <span class="block text-xs text-gray-400 uppercase font-bold">Cost</span>
-                        <span class="text-xl font-bold text-gray-900">$80</span>
+                        <span class="block text-[10px] text-slate-400 uppercase font-bold tracking-tighter">Unit Cost</span>
+                        <span class="text-2xl font-black text-slate-900">$80</span>
                     </div>
                 </div>
 
-                <!-- Financials -->
-                <div class="space-y-2 mb-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">Retail Price:</span>
-                        <span class="text-gray-700 font-medium line-through">$549.00</span>
+                <div class="space-y-3 mb-8 p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500">Retail MSRP:</span>
+                        <span class="text-slate-400 font-medium line-through decoration-slate-300">$549.00</span>
                     </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">Market "Good Deal":</span>
-                        <span class="text-blue-600 font-bold">$220.00</span>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500 italic font-medium">Quick Resell:</span>
+                        <span class="text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-md">$220.00</span>
                     </div>
-                    <div class="pt-2 border-t border-gray-200 flex justify-between items-center">
-                        <span class="text-sm font-bold text-gray-900">Est. Profit:</span>
-                        <span class="text-emerald-600 font-bold">+$140.00</span>
+                    <div class="pt-3 border-t border-slate-200 flex justify-between items-center">
+                        <span class="text-sm font-bold text-slate-700 uppercase">Est. Profit:</span>
+                        <span class="text-xl font-bold text-emerald-600">+$140.00</span>
                     </div>
                 </div>
 
-                <a href="https://www.dhgate.com/product/for-new-apple-airpods-max-2-gen-metal-wireless/1073025485.html?dspm=pcen.sp.list.3.WH6fOCJVA73Z3GLIlKy8&resource_id=1073025485&scm_id=yf.prodauto.28.S8aaafbe698ead91e0198eed316691d2b-Q1-R0-Ppl6o3engrx-Ggam3qw7kjr-Aother-B100.4-A9119_C1921_D7_E1135x0i1033x1i1150x0i42x4_G5_I2_J0_K0_Nah_O0_Rw1iUUuYdkhc_S7_U223_V282.IhqunrhSairpodsHairpodXmaxBt7vuwlC5qO-EssJ0Dpf&skuId=1423125001285775370&stockCountry=US" target="_blank" class="mt-auto w-full text-center bg-black text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors">
-                    Find Product
+                <a href="https://www.dhgate.com/product/for-new-apple-airpods-max-2-gen-metal-wireless/1073025485.html" target="_blank" class="mt-auto w-full inline-flex justify-center items-center gap-2 bg-slate-900 text-white py-4 rounded-xl font-semibold hover:bg-slate-800 transition-all active:scale-[0.98]">
+                    Source Details
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                 </a>
             </div>
 
             <!-- Air Force 1 Card -->
-            <div class="product-card bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col">
-                <div class="image-container mb-6">
-                    <img src="https://static.nike.com/a/images/t_web_pdp_936_v2/f_auto/b7d9211c-26e7-431a-ac24-b0540fb3c00f/AIR+FORCE+1+%2707.png" alt="Air Force 1">
+            <div class="product-card bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col relative">
+                <div class="image-container mb-8">
+                    <img src="../Images/pr3.png" alt="Air Force 1" onerror="this.src='https://placehold.co/400x400/f1f5f9/64748b?text=Air+Force+1'">
                 </div>
                 
-                <div class="flex justify-between items-start mb-4">
+                <div class="flex justify-between items-end mb-6">
                     <div>
-                        <h2 class="text-xl font-bold text-gray-800">Air Force 1</h2>
-                        <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Triple White</span>
+                        <h2 class="text-2xl font-bold text-slate-800 leading-tight">Air Force 1</h2>
+                        <p class="text-sm font-medium text-slate-400 uppercase tracking-widest mt-1">Triple White</p>
                     </div>
                     <div class="text-right">
-                        <span class="block text-xs text-gray-400 uppercase font-bold">Cost</span>
-                        <span class="text-xl font-bold text-gray-900">$30</span>
+                        <span class="block text-[10px] text-slate-400 uppercase font-bold tracking-tighter">Unit Cost</span>
+                        <span class="text-2xl font-black text-slate-900">$30</span>
                     </div>
                 </div>
 
-                <!-- Financials -->
-                <div class="space-y-2 mb-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">Retail Price:</span>
-                        <span class="text-gray-700 font-medium line-through">$115.00</span>
+                <div class="space-y-3 mb-8 p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500">Retail MSRP:</span>
+                        <span class="text-slate-400 font-medium line-through decoration-slate-300">$115.00</span>
                     </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">Market "Good Deal":</span>
-                        <span class="text-blue-600 font-bold">$75.00</span>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500 italic font-medium">Quick Resell:</span>
+                        <span class="text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-md">$75.00</span>
                     </div>
-                    <div class="pt-2 border-t border-gray-200 flex justify-between items-center">
-                        <span class="text-sm font-bold text-gray-900">Est. Profit:</span>
-                        <span class="text-emerald-600 font-bold">+$45.00</span>
+                    <div class="pt-3 border-t border-slate-200 flex justify-between items-center">
+                        <span class="text-sm font-bold text-slate-700 uppercase">Est. Profit:</span>
+                        <span class="text-xl font-bold text-emerald-600">+$45.00</span>
                     </div>
                 </div>
 
-                <a href="https://www.dhgate.com/product/4-basketball-shoes-for-men-women-4s-sneaker/1035908503.html?f=bm%7Caff%7Cyfaf%7C1300509%7C1300509_1314907_180799%7CS694eacf5e4b034c822836895%7C&skuId=1408023097776902249" target="_blank" class="mt-auto w-full text-center bg-black text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors">
-                    Find Product
+                <a href="https://www.dhgate.com/product/4-basketball-shoes-for-men-women-4s-sneaker/1035908503.html" target="_blank" class="mt-auto w-full inline-flex justify-center items-center gap-2 bg-slate-900 text-white py-4 rounded-xl font-semibold hover:bg-slate-800 transition-all active:scale-[0.98]">
+                    Source Details
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                 </a>
             </div>
 
         </div>
+
+        <!-- Summary Footer -->
+        <footer class="mt-16 pt-8 border-t border-slate-200 text-center text-slate-400 text-sm">
+            <p>&copy; 2026 Product Analysis Dashboard. All margins are estimates based on secondary market trends.</p>
+        </footer>
     </div>
+
 </body>
 </html>
-
