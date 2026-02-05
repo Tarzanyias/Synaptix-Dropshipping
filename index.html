@@ -78,10 +78,7 @@
     <script>
         const PRODUCTS = [
             { id: 'airpods', name: 'AirPods', category: 'Audio', originalPrice: 129.00, salePrice: 65.00, image: 'Images/pr1.png', desc: 'The world\'s most popular wireless headphones.', paypalId: "YTH845GYNGTWN" },
-            { id: 'airpods-max', name: 'AirPods Max', category: 'Audio', originalPrice: 549.00, salePrice: 220.00, image: 'Images/pr2.png', desc: 'A perfect balance of exhilarating high-fidelity audio.', paypalId: "ADDNANEMTYFDU" },
-            { id: 'af1', name: 'Air Force 1', category: 'Footwear', originalPrice: 115.00, salePrice: 75.00, image: 'Images/pr3.png', desc: 'The legend lives on in the Nike Air Force 1.', paypalId: "GU84H5G4Y2DTN" },
-            { id: 'hellstar', name: 'Hellstar Hoodie', category: 'Apparel', originalPrice: 285.00, salePrice: 245.00, image: 'Images/pr4.png', desc: 'Hellstar "Path to Paradise" Heavyweight Hoodie. Authentic brand new piece.', paypalId: "3H39JZGD2J57W" },
-            { id: 'sp5der', name: 'Sp5der Hoodie', category: 'Apparel', originalPrice: 225.00, salePrice: 195.00, image: 'Images/pr5.png', desc: 'Sp5der 555555 Angel Number Hoodie by Young Thug. Brand new deadstock.', paypalId: "3LYMXP645ZUUC" }
+            { id: 'ufo-drone', name: 'UFO Drone', category: 'Tech', originalPrice: 85.00, salePrice: 50.00, image: 'Images/pr2.png', desc: 'Next-generation aerial surveillance and flight stabilization.', paypalId: "67FKE8555PTDA" }
         ];
 
         let cartItems = [];
@@ -138,7 +135,6 @@
             try {
                 const storedCart = localStorage.getItem('synaptixCart');
                 if (storedCart) cartItems = JSON.parse(storedCart);
-                // Force single item cart for exclusive drops
                 if (cartItems.length > 1) cartItems = [cartItems[0]];
             } catch (e) { cartItems = []; }
             renderCart();
@@ -266,11 +262,13 @@
                         </div>
                     </div>`;
                 
-                const btnId = `paypal-container-${item.id}`;
+                const btnId = `paypal-container-${item.paypalId}`;
                 paypalContainer.innerHTML = `<div id="${btnId}" class="paypal-wrapper"></div>`;
                 
-                if (window.paypal && window.paypal.HostedButtons) {
+                if (item.paypalId && window.paypal && window.paypal.HostedButtons) {
                     window.paypal.HostedButtons({ hostedButtonId: item.paypalId }).render(`#${btnId}`);
+                } else {
+                    paypalContainer.innerHTML = `<div class="p-4 bg-gray-100 text-[10px] font-bold uppercase text-center text-gray-400 border border-dashed border-gray-300">Checkout temporarily unavailable for this item</div>`;
                 }
             }
             cartSubtotal.textContent = `$${total.toFixed(2)}`;
@@ -379,9 +377,9 @@
                     <h2 class="text-3xl font-black uppercase tracking-tighter">Current Highlights</h2>
                     <a href="#" onclick="showPage('shop-all-page'); return false;" class="text-xs font-bold uppercase underline tracking-widest">Explore All</a>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-12" id="home-highlights">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12" id="home-highlights">
                     <script>
-                        document.write(PRODUCTS.slice(0, 3).map(p => `
+                        document.write(PRODUCTS.slice(0, 2).map(p => `
                             <div class="group cursor-pointer" onclick="showPage('item-details-page', '${p.id}')">
                                 <div class="bg-gray-50 aspect-[4/5] mb-6 overflow-hidden flex items-center justify-center border border-transparent group-hover:border-black transition-all">
                                     <img src="${p.image}" onerror="handleImageError(this, '${p.name}')" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 grayscale group-hover:grayscale-0">
@@ -404,8 +402,7 @@
                         <div class="flex flex-col space-y-3">
                             <button onclick="setFilter('All')" data-cat="All" class="filter-btn text-left text-xs uppercase font-bold tracking-widest border-l-2 border-black pl-4 text-black transition">Total Inventory</button>
                             <button onclick="setFilter('Audio')" data-cat="Audio" class="filter-btn text-left text-xs uppercase font-bold tracking-widest border-l-2 border-transparent pl-4 text-gray-400 hover:text-black transition">Audio Gear</button>
-                            <button onclick="setFilter('Footwear')" data-cat="Footwear" class="filter-btn text-left text-xs uppercase font-bold tracking-widest border-l-2 border-transparent pl-4 text-gray-400 hover:text-black transition">Footwear</button>
-                            <button onclick="setFilter('Apparel')" data-cat="Apparel" class="filter-btn text-left text-xs uppercase font-bold tracking-widest border-l-2 border-transparent pl-4 text-gray-400 hover:text-black transition">Apparel</button>
+                            <button onclick="setFilter('Tech')" data-cat="Tech" class="filter-btn text-left text-xs uppercase font-bold tracking-widest border-l-2 border-transparent pl-4 text-gray-400 hover:text-black transition">Advanced Tech</button>
                         </div>
                     </div>
                 </aside>
@@ -464,7 +461,7 @@
                 </nav>
             </div>
             <div>
-                <p class="text-[10px] text-gray-600 uppercase font-bold">© 2025 SYNAPTIX INC</p>
+                <p class="text-[10px] text-gray-600 uppercase font-bold">© 2026 Rayaan, Arif</p>
             </div>
         </div>
     </footer>
