@@ -58,10 +58,6 @@
             display: block;
         }
         
-        #top-banner {
-            transition: all 0.3s ease;
-        }
-        
         .header-main {
             transition: top 0.3s ease;
         }
@@ -73,17 +69,37 @@
             background-repeat: no-repeat;
             background-position: center;
         }
+        
+        .color-dot.active {
+            outline: 2px solid black;
+            outline-offset: 2px;
+        }
     </style>
 
     <script>
         const PRODUCTS = [
             { id: 'airpods', name: 'AirPods', category: 'Audio', originalPrice: 129.00, salePrice: 65.00, image: 'Images/pr1.png', desc: 'The world\'s most popular wireless headphones.', paypalId: "YTH845GYNGTWN" },
-            { id: 'ufo-drone', name: 'UFO Drone', category: 'Tech', originalPrice: 85.00, salePrice: 50.00, image: 'Images/pr2.png', desc: 'Next-generation aerial surveillance and flight stabilization.', paypalId: "67FKE8555PTDA" }
+            { id: 'ufo-drone', name: 'UFO Drone', category: 'Tech', originalPrice: 85.00, salePrice: 50.00, image: 'Images/pr2.png', desc: 'Next-generation aerial surveillance and flight stabilization.', paypalId: "67FKE8555PTDA" },
+            { 
+                id: 'synaptix-camera', 
+                name: 'Synaptix Camera', 
+                category: 'Tech', 
+                originalPrice: 84.99, 
+                salePrice: 49.99, 
+                image: 'Images/pr3.png', 
+                desc: 'Ultra-compact high definition digital camera for capturing every moment with precision.',
+                variants: [
+                    { name: 'White', color: '#FFFFFF', img: 'Images/pr3.png', paypalId: "UT595FFDTU8YE" },
+                    { name: 'Black', color: '#000000', img: 'Images/pr3b.png', paypalId: "L2SQYZQHV4SFC" },
+                    { name: 'Pink', color: '#FFC0CB', img: 'Images/pr3p.png', paypalId: "S2GHRXMEPJHM6" }
+                ]
+            }
         ];
 
         let cartItems = [];
         let currentFilter = 'All';
         let showcaseClicks = 0;
+        let selectedVariant = null;
 
         function init() {
             loadCart();
@@ -212,11 +228,51 @@
             document.getElementById('p-desc').textContent = product.desc;
             document.getElementById('p-cat-label').textContent = product.category;
             document.getElementById('p-add-btn').onclick = () => addToCart(product.id);
+            
+            const variantContainer = document.getElementById('variant-selectors');
+            if (product.variants) {
+                variantContainer.classList.remove('hidden');
+                selectedVariant = product.variants[0];
+                img.src = selectedVariant.img;
+                
+                variantContainer.innerHTML = `
+                    <p class="text-[10px] font-black uppercase tracking-widest mb-3">Select Color: <span id="variant-name" class="text-gray-400">${selectedVariant.name}</span></p>
+                    <div class="flex space-x-3 mb-8">
+                        ${product.variants.map((v, i) => `
+                            <button onclick="changeVariant('${product.id}', ${i})" 
+                                    class="color-dot w-8 h-8 rounded-full border border-gray-200 transition-all ${i === 0 ? 'active' : ''}" 
+                                    style="background-color: ${v.color}" 
+                                    title="${v.name}"></button>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                variantContainer.classList.add('hidden');
+                selectedVariant = null;
+            }
+        }
+
+        function changeVariant(productId, index) {
+            const product = PRODUCTS.find(p => p.id === productId);
+            selectedVariant = product.variants[index];
+            document.getElementById('p-image').src = selectedVariant.img;
+            document.getElementById('variant-name').textContent = selectedVariant.name;
+            document.querySelectorAll('.color-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
         }
 
         function addToCart(productId) {
             const product = PRODUCTS.find(p => p.id === productId);
-            cartItems = [{ ...product, qty: 1 }];
+            const cartProduct = { ...product, qty: 1 };
+            
+            if (selectedVariant) {
+                cartProduct.name = `${product.name} (${selectedVariant.name})`;
+                cartProduct.image = selectedVariant.img;
+                cartProduct.paypalId = selectedVariant.paypalId; // Use the specific variant button ID
+            }
+            
+            cartItems = [cartProduct];
             saveCart();
             renderCart();
             toggleCart(true); 
@@ -262,13 +318,12 @@
                         </div>
                     </div>`;
                 
-                const btnId = `paypal-container-${item.paypalId}`;
-                paypalContainer.innerHTML = `<div id="${btnId}" class="paypal-wrapper"></div>`;
-                
                 if (item.paypalId && window.paypal && window.paypal.HostedButtons) {
+                    const btnId = `paypal-container-${item.paypalId}`;
+                    paypalContainer.innerHTML = `<div id="${btnId}" class="paypal-wrapper"></div>`;
                     window.paypal.HostedButtons({ hostedButtonId: item.paypalId }).render(`#${btnId}`);
                 } else {
-                    paypalContainer.innerHTML = `<div class="p-4 bg-gray-100 text-[10px] font-bold uppercase text-center text-gray-400 border border-dashed border-gray-300">Checkout temporarily unavailable for this item</div>`;
+                    paypalContainer.innerHTML = `<div class="p-6 bg-gray-50 text-[10px] font-bold uppercase text-center text-gray-400 border border-dashed border-gray-200">Checkout credentials pending</div>`;
                 }
             }
             cartSubtotal.textContent = `$${total.toFixed(2)}`;
@@ -296,7 +351,6 @@
 </head>
 <body class="bg-white">
     
-    <!-- Easter Egg Password Modal -->
     <div id="portal-modal" class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-6 hidden">
         <div class="bg-white p-8 max-w-sm w-full border-4 border-black">
             <h2 class="text-2xl font-black uppercase mb-6 tracking-tighter">Internal Access</h2>
@@ -306,18 +360,15 @@
         </div>
     </div>
 
-    <!-- Persistent Seller Portal Floating Button -->
     <a href="Pages/SynaptixPortal.html" id="seller-portal-btn" class="fixed bottom-8 right-8 z-[50] bg-black text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform hidden">
         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
     </a>
 
-    <!-- SALE BANNER -->
     <div id="top-banner" class="bg-black text-white py-2 px-6 text-[11px] font-bold tracking-[0.2em] sticky top-0 z-50 uppercase border-b border-white/10 flex items-center justify-center">
         <button onclick="closeBanner()" class="absolute left-4 text-white hover:text-red-500 transition-colors text-sm font-black">✕</button>
         <div class="text-center px-8">Flash Sale Active <span class="x-mark italic text-sm mx-2">X</span> Inventory Levels High</div>
     </div>
 
-    <!-- HEADER -->
     <header id="header-main" class="header-main border-b sticky top-8 z-40 bg-white/80 backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-12">
@@ -354,7 +405,6 @@
     </header>
 
     <main>
-        <!-- Home Page -->
         <div id="home-page" class="page-view">
             <section class="relative h-[80vh] bg-gray-50 flex items-center px-6 overflow-hidden">
                 <div class="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -371,29 +421,8 @@
                     </div>
                 </div>
             </section>
-
-            <section class="py-24 px-6 max-w-7xl mx-auto">
-                <div class="flex justify-between items-end mb-12">
-                    <h2 class="text-3xl font-black uppercase tracking-tighter">Current Highlights</h2>
-                    <a href="#" onclick="showPage('shop-all-page'); return false;" class="text-xs font-bold uppercase underline tracking-widest">Explore All</a>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-12" id="home-highlights">
-                    <script>
-                        document.write(PRODUCTS.slice(0, 2).map(p => `
-                            <div class="group cursor-pointer" onclick="showPage('item-details-page', '${p.id}')">
-                                <div class="bg-gray-50 aspect-[4/5] mb-6 overflow-hidden flex items-center justify-center border border-transparent group-hover:border-black transition-all">
-                                    <img src="${p.image}" onerror="handleImageError(this, '${p.name}')" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 grayscale group-hover:grayscale-0">
-                                </div>
-                                <h3 class="text-xs font-bold uppercase tracking-widest">${p.name}</h3>
-                                <p class="text-sm font-medium opacity-60">$${p.salePrice.toFixed(2)}</p>
-                            </div>
-                        `).join(''));
-                    </script>
-                </div>
-            </section>
         </div>
 
-        <!-- Shop All -->
         <div id="shop-all-page" class="page-view hidden px-6 py-20 max-w-7xl mx-auto">
             <div class="flex flex-col md:flex-row gap-12">
                 <aside class="w-full md:w-64 flex-shrink-0">
@@ -412,11 +441,10 @@
             </div>
         </div>
 
-        <!-- Product Details -->
         <div id="item-details-page" class="page-view hidden py-24 px-6 max-w-7xl mx-auto">
             <div class="flex flex-col md:flex-row gap-16">
                 <div class="md:w-1/2 bg-gray-50 aspect-square flex items-center justify-center border overflow-hidden rounded-xl">
-                    <img id="p-image" src="" class="w-full h-full object-cover">
+                    <img id="p-image" src="" class="w-full h-full object-cover transition-all duration-300">
                 </div>
                 <div class="md:w-1/2 flex flex-col justify-center">
                     <nav class="mb-8 text-[10px] font-bold uppercase tracking-widest text-gray-400">
@@ -427,13 +455,15 @@
                         <span id="p-sale" class="text-3xl font-black"></span>
                         <span id="p-original" class="text-lg text-gray-400 line-through font-medium"></span>
                     </div>
+                    
+                    <div id="variant-selectors" class="mb-8 hidden"></div>
+                    
                     <p id="p-desc" class="text-gray-600 text-lg leading-relaxed mb-12 max-w-md"></p>
                     <button id="p-add-btn" class="w-full bg-black text-white py-6 font-bold uppercase tracking-widest hover:bg-gray-800 transition shadow-2xl">Secure Item</button>
                 </div>
             </div>
         </div>
 
-        <!-- Support Page -->
         <div id="contact-page" class="page-view hidden py-24 px-6 max-w-2xl mx-auto">
             <h1 class="text-5xl font-black uppercase tracking-tighter mb-12">Global Support</h1>
             <form class="space-y-8" onsubmit="event.preventDefault(); alert('Request logged.');">
@@ -466,7 +496,6 @@
         </div>
     </footer>
 
-    <!-- CART SIDEBAR -->
     <div id="cart-overlay" class="fixed inset-0 bg-black/60 z-[60] hidden backdrop-blur-sm" onclick="toggleCart()"></div>
     <div id="cart-sidebar" class="fixed right-0 top-0 h-full w-full sm:w-[480px] bg-white z-[70] translate-x-full transition-transform duration-500 ease-in-out flex flex-col shadow-[-20px_0_50px_rgba(0,0,0,0.1)]">
         <div class="p-8 border-b flex justify-between items-center bg-gray-50">
@@ -485,3 +514,5 @@
 
 </body>
 </html>
+
+
