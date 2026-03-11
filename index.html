@@ -1,12 +1,15 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Synaptix Official Store™</title>
     <link rel="icon" type="image/png" href="Images/favicon.png">
-    <script 
-  src="https://www.paypal.com/sdk/js?client-id=BAAAlaRxA3KbFZr2em3TUeirbZdGSngwcyHMItxDS_YPYIFuSH1BfIKdY5wRjmhJMC0XvPmC7t0Lh5S57c&components=hosted-buttons&enable-funding=venmo&currency=USD">
-</script>
+    
+    <!-- PayPal SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=BAAAlaRxA3KbFZr2em3TUeirbZdGSngwcyHMItxDS_YPYIFuSH1BfIKdY5wRjmhJMC0XvPmC7t0Lh5S57c&components=hosted-buttons&enable-funding=venmo&currency=USD"></script>
+    
+    <!-- Google Tag Manager -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17824729040"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -15,31 +18,37 @@
       gtag('config', 'AW-17824729040');
     </script>
     
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
         body {
             font-family: 'Inter', sans-serif;
             background-color: #ffffff; 
             overflow-x: hidden;
         }
+
         .page-view { transition: opacity 0.3s ease; }
-        .hidden { display: none; }
+        
         .x-mark {
             color: #ef4444;
             font-family: 'Courier New', Courier, monospace;
             font-weight: 900;
         }
+
         .nav-link.active {
             text-decoration: underline;
             text-underline-offset: 8px;
             text-decoration-thickness: 2px;
             color: black;
         }
+
         #cart-content::-webkit-scrollbar { width: 4px; }
         #cart-content::-webkit-scrollbar-track { background: #f1f1f1; }
         #cart-content::-webkit-scrollbar-thumb { background: #000; }
+
         .paypal-wrapper { width: 100%; min-height: 50px; }
         
         .account-dropdown {
@@ -54,6 +63,7 @@
             z-index: 100;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
+
         .account-container:hover .account-dropdown {
             display: block;
         }
@@ -69,37 +79,25 @@
             background-repeat: no-repeat;
             background-position: center;
         }
-        
-        .color-dot.active {
-            outline: 2px solid black;
-            outline-offset: 2px;
-        }
     </style>
 
     <script>
         const PRODUCTS = [
-            { id: 'airpods', name: 'AirPods', category: 'Audio', originalPrice: 129.00, salePrice: 65.00, image: 'Images/pr1.png', desc: 'The world\'s most popular wireless headphones.', paypalId: "YTH845GYNGTWN" },
-            { id: 'ufo-drone', name: 'UFO Drone', category: 'Tech', originalPrice: 85.00, salePrice: 50.00, image: 'Images/pr2.png', desc: 'Next-generation aerial surveillance and flight stabilization.', paypalId: "67FKE8555PTDA" },
-            { 
-                id: 'synaptix-camera', 
-                name: 'Synaptix Camera', 
-                category: 'Tech', 
-                originalPrice: 84.99, 
-                salePrice: 49.99, 
-                image: 'Images/pr3.png', 
-                desc: 'Ultra-compact high definition digital camera for capturing every moment with precision.',
-                variants: [
-                    { name: 'White', color: '#FFFFFF', img: 'Images/pr3.png', paypalId: "UT595FFDTU8YE" },
-                    { name: 'Black', color: '#000000', img: 'Images/pr3b.png', paypalId: "L2SQYZQHV4SFC" },
-                    { name: 'Pink', color: '#FFC0CB', img: 'Images/pr3p.png', paypalId: "S2GHRXMEPJHM6" }
-                ]
+            {
+                id: 'jellyfish-humidifier',
+                name: 'Jellyfish Humidifier',
+                category: 'Home Tech',
+                originalPrice: 45.00,
+                salePrice: 34.99,
+                image: 'Images/pr1.png',
+                desc: 'Experience soothing moisture with a unique jellyfish smoke ring effect. Perfect for meditation, sleep, and creating a futuristic atmosphere in any room.',
+                paypalId: 'KK8U7NW44WEBW'
             }
         ];
 
         let cartItems = [];
         let currentFilter = 'All';
         let showcaseClicks = 0;
-        let selectedVariant = null;
 
         function init() {
             loadCart();
@@ -126,7 +124,7 @@
             const pass = document.getElementById('portal-pass-input').value;
             if (pass === 'w33pr0m3t3R*') {
                 localStorage.setItem('synaptixSellerAccess', 'true');
-                alert('now you are in seller portal');
+                alert('Success: Access granted to seller portal.');
                 document.getElementById('portal-modal').classList.add('hidden');
                 checkPortalAccess();
             } else {
@@ -180,18 +178,23 @@
         function showPage(pageId, productId = null) {
             document.querySelectorAll('.page-view').forEach(v => v.classList.add('hidden'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            
             const target = document.getElementById(pageId);
             if (target) target.classList.remove('hidden');
+
             const nav = document.querySelector(`[data-nav="${pageId}"]`);
             if (nav) nav.classList.add('active');
+
             if (pageId === 'item-details-page' && productId) renderProductDetails(PRODUCTS.find(p => p.id === productId));
             if (pageId === 'shop-all-page') renderShopGrid();
+            
             window.scrollTo(0,0);
         }
 
         function renderShopGrid() {
             const grid = document.getElementById('shop-grid');
             const filtered = currentFilter === 'All' ? PRODUCTS : PRODUCTS.filter(p => p.category === currentFilter);
+            
             grid.innerHTML = filtered.map(p => `
                 <div class="bg-white group cursor-pointer" onclick="showPage('item-details-page', '${p.id}')">
                     <div class="relative aspect-square overflow-hidden bg-gray-100 rounded-lg">
@@ -199,8 +202,14 @@
                         <div class="absolute top-2 left-2 bg-white px-2 py-1 text-[10px] font-bold border border-black uppercase tracking-tighter">Sale <span class="x-mark italic">X</span></div>
                     </div>
                     <div class="mt-4 flex justify-between items-start">
-                        <div><h3 class="text-sm font-medium text-gray-900">${p.name}</h3><p class="mt-1 text-xs text-gray-500">${p.category}</p></div>
-                        <div class="text-right"><p class="text-sm font-bold text-red-600">$${p.salePrice.toFixed(2)}</p><p class="text-xs text-gray-400 line-through">$${p.originalPrice.toFixed(2)}</p></div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-900">${p.name}</h3>
+                            <p class="mt-1 text-xs text-gray-500">${p.category}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-bold text-red-600">$${p.salePrice.toFixed(2)}</p>
+                            <p class="text-xs text-gray-400 line-through">$${p.originalPrice.toFixed(2)}</p>
+                        </div>
                     </div>
                 </div>
             `).join('');
@@ -219,66 +228,29 @@
         }
 
         function renderProductDetails(product) {
+            if (!product) return;
             const img = document.getElementById('p-image');
             img.src = product.image;
             img.onerror = () => handleImageError(img, product.name);
+            
             document.getElementById('p-name').innerHTML = `${product.name} <span class="x-mark italic text-2xl">X</span>`;
             document.getElementById('p-original').textContent = `$${product.originalPrice.toFixed(2)}`;
             document.getElementById('p-sale').textContent = `$${product.salePrice.toFixed(2)}`;
             document.getElementById('p-desc').textContent = product.desc;
             document.getElementById('p-cat-label').textContent = product.category;
             document.getElementById('p-add-btn').onclick = () => addToCart(product.id);
-            
-            const variantContainer = document.getElementById('variant-selectors');
-            if (product.variants) {
-                variantContainer.classList.remove('hidden');
-                selectedVariant = product.variants[0];
-                img.src = selectedVariant.img;
-                
-                variantContainer.innerHTML = `
-                    <p class="text-[10px] font-black uppercase tracking-widest mb-3">Select Color: <span id="variant-name" class="text-gray-400">${selectedVariant.name}</span></p>
-                    <div class="flex space-x-3 mb-8">
-                        ${product.variants.map((v, i) => `
-                            <button onclick="changeVariant('${product.id}', ${i})" 
-                                    class="color-dot w-8 h-8 rounded-full border border-gray-200 transition-all ${i === 0 ? 'active' : ''}" 
-                                    style="background-color: ${v.color}" 
-                                    title="${v.name}"></button>
-                        `).join('')}
-                    </div>
-                `;
-            } else {
-                variantContainer.classList.add('hidden');
-                selectedVariant = null;
-            }
-        }
-
-        function changeVariant(productId, index) {
-            const product = PRODUCTS.find(p => p.id === productId);
-            selectedVariant = product.variants[index];
-            document.getElementById('p-image').src = selectedVariant.img;
-            document.getElementById('variant-name').textContent = selectedVariant.name;
-            document.querySelectorAll('.color-dot').forEach((dot, i) => {
-                dot.classList.toggle('active', i === index);
-            });
         }
 
         function addToCart(productId) {
             const product = PRODUCTS.find(p => p.id === productId);
-            const cartProduct = { ...product, qty: 1 };
-            
-            if (selectedVariant) {
-                cartProduct.name = `${product.name} (${selectedVariant.name})`;
-                cartProduct.image = selectedVariant.img;
-                cartProduct.paypalId = selectedVariant.paypalId; // Use the specific variant button ID
-            }
-            
-            cartItems = [cartProduct];
+            if (!product) return;
+            cartItems = [{ ...product, qty: 1 }];
             saveCart();
             renderCart();
             toggleCart(true); 
         }
 
-        function removeItem(productId) {
+        function removeItem() {
             cartItems = [];
             saveCart(); 
             renderCart();
@@ -292,38 +264,45 @@
             paypalContainer.innerHTML = ''; 
             
             if (cartItems.length === 0) {
-                cartContent.innerHTML = `<div class="flex flex-col items-center justify-center h-full opacity-30 py-20"><svg class="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg><p class="text-xs font-bold uppercase tracking-widest">Shopping Cart Empty</p></div>`;
+                cartContent.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full opacity-30 py-20 text-center">
+                        <svg class="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                        </svg>
+                        <p class="text-xs font-bold uppercase tracking-widest">Shopping Cart Empty</p>
+                    </div>`;
                 document.getElementById('cart-checkout-section').classList.add('hidden');
             } else {
                 const item = cartItems[0];
                 total = item.salePrice;
                 document.getElementById('cart-checkout-section').classList.remove('hidden');
+                
                 cartContent.innerHTML = `
-                    <div class="group relative flex items-start space-x-4 mb-8 pb-8 border-b border-gray-100 last:border-0">
+                    <div class="group relative flex items-start space-x-4 mb-8 pb-8 border-b border-gray-100">
                         <div class="w-24 h-24 bg-gray-50 overflow-hidden flex-shrink-0 border border-gray-100">
                             <img src="${item.image}" onerror="handleImageError(this, '${item.name}')" class="w-full h-full object-cover">
                         </div>
                         <div class="flex-grow">
                             <div class="flex justify-between items-start mb-1">
                                 <h3 class="text-[11px] font-black uppercase tracking-widest">${item.name} <span class="x-mark italic">X</span></h3>
-                                <button onclick="removeItem('${item.id}')" class="text-gray-300 hover:text-black transition">
+                                <button onclick="removeItem()" class="text-gray-300 hover:text-black transition">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>
                             </div>
                             <p class="text-[10px] text-gray-400 uppercase font-bold mb-4">${item.category}</p>
                             <div class="flex justify-between items-end">
-                                <span class="text-[10px] font-black uppercase text-gray-400">Qty: 1 (Limited)</span>
+                                <span class="text-[10px] font-black uppercase text-gray-400">Qty: 1</span>
                                 <p class="text-sm font-black">$${total.toFixed(2)}</p>
                             </div>
                         </div>
                     </div>`;
                 
-                if (item.paypalId && window.paypal && window.paypal.HostedButtons) {
-                    const btnId = `paypal-container-${item.paypalId}`;
-                    paypalContainer.innerHTML = `<div id="${btnId}" class="paypal-wrapper"></div>`;
-                    window.paypal.HostedButtons({ hostedButtonId: item.paypalId }).render(`#${btnId}`);
-                } else {
-                    paypalContainer.innerHTML = `<div class="p-6 bg-gray-50 text-[10px] font-bold uppercase text-center text-gray-400 border border-dashed border-gray-200">Checkout credentials pending</div>`;
+                const btnId = `paypal-container-${item.paypalId}`;
+                paypalContainer.innerHTML = `<div id="${btnId}" class="paypal-wrapper"></div>`;
+                if (window.paypal && window.paypal.HostedButtons) {
+                    window.paypal.HostedButtons({
+                        hostedButtonId: item.paypalId,
+                    }).render(`#${btnId}`);
                 }
             }
             cartSubtotal.textContent = `$${total.toFixed(2)}`;
@@ -350,7 +329,8 @@
     </script>
 </head>
 <body class="bg-white">
-    
+
+    <!-- Secret Portal Modal -->
     <div id="portal-modal" class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-6 hidden">
         <div class="bg-white p-8 max-w-sm w-full border-4 border-black">
             <h2 class="text-2xl font-black uppercase mb-6 tracking-tighter">Internal Access</h2>
@@ -360,15 +340,18 @@
         </div>
     </div>
 
+    <!-- Hidden Seller Portal Entry -->
     <a href="Pages/SynaptixPortal.html" id="seller-portal-btn" class="fixed bottom-8 right-8 z-[50] bg-black text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform hidden">
         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
     </a>
 
+    <!-- Top Promo Banner -->
     <div id="top-banner" class="bg-black text-white py-2 px-6 text-[11px] font-bold tracking-[0.2em] sticky top-0 z-50 uppercase border-b border-white/10 flex items-center justify-center">
         <button onclick="closeBanner()" class="absolute left-4 text-white hover:text-red-500 transition-colors text-sm font-black">✕</button>
-        <div class="text-center px-8">Flash Sale Active <span class="x-mark italic text-sm mx-2">X</span> Inventory Levels High</div>
+        <div class="text-center px-8">Full Deployment Sequence Active <span class="x-mark italic text-sm mx-2">X</span> Inventory High</div>
     </div>
 
+    <!-- Header Navigation -->
     <header id="header-main" class="header-main border-b sticky top-8 z-40 bg-white/80 backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-12">
@@ -405,8 +388,9 @@
     </header>
 
     <main>
+        <!-- Home Page -->
         <div id="home-page" class="page-view">
-            <section class="relative h-[80vh] bg-gray-50 flex items-center px-6 overflow-hidden">
+            <section class="relative h-[85vh] bg-gray-50 flex items-center px-6 overflow-hidden">
                 <div class="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                     <div>
                         <span class="inline-block px-3 py-1 bg-black text-white text-[10px] font-bold uppercase tracking-tighter mb-6">
@@ -414,15 +398,19 @@
                         </span>
                         <h1 class="text-6xl md:text-8xl font-black tracking-tighter mb-6 leading-[0.9]">RESTOCKED.<br>REDEFINED.</h1>
                         <p class="text-gray-500 max-w-sm mb-10 text-lg">Inventory levels are high across all core categories. Secure your essentials while pricing remains restricted.</p>
-                        <button onclick="showPage('shop-all-page')" class="bg-black text-white px-10 py-5 font-bold uppercase tracking-widest hover:bg-gray-800 transition">Shop The Drop</button>
+                        <div class="flex space-x-4">
+                            <button onclick="showPage('shop-all-page')" class="bg-black text-white px-10 py-5 font-bold uppercase tracking-widest hover:bg-gray-800 transition">Buy Now</button>
+                            <button onclick="showPage('contact-page')" class="border border-black text-black px-10 py-5 font-bold uppercase tracking-widest hover:bg-gray-100 transition">Support</button>
+                        </div>
                     </div>
                     <div class="hidden md:block">
-                        <img src="Images/sh.png" onclick="handleShowcaseClick()" onerror="handleImageError(this, 'Showcase')" class="w-full h-auto drop-shadow-2xl grayscale hover:grayscale-0 transition-all duration-700 cursor-pointer">
+                        <img src="Images/sh.png" onclick="handleShowcaseClick()" onerror="handleImageError(this, 'Showcase')" class="w-full h-auto drop-shadow-2xl grayscale hover:grayscale-0 transition-all duration-700 cursor-pointer scale-110">
                     </div>
                 </div>
             </section>
         </div>
 
+        <!-- Shop All Page -->
         <div id="shop-all-page" class="page-view hidden px-6 py-20 max-w-7xl mx-auto">
             <div class="flex flex-col md:flex-row gap-12">
                 <aside class="w-full md:w-64 flex-shrink-0">
@@ -430,8 +418,6 @@
                     <div class="space-y-12">
                         <div class="flex flex-col space-y-3">
                             <button onclick="setFilter('All')" data-cat="All" class="filter-btn text-left text-xs uppercase font-bold tracking-widest border-l-2 border-black pl-4 text-black transition">Total Inventory</button>
-                            <button onclick="setFilter('Audio')" data-cat="Audio" class="filter-btn text-left text-xs uppercase font-bold tracking-widest border-l-2 border-transparent pl-4 text-gray-400 hover:text-black transition">Audio Gear</button>
-                            <button onclick="setFilter('Tech')" data-cat="Tech" class="filter-btn text-left text-xs uppercase font-bold tracking-widest border-l-2 border-transparent pl-4 text-gray-400 hover:text-black transition">Advanced Tech</button>
                         </div>
                     </div>
                 </aside>
@@ -441,38 +427,46 @@
             </div>
         </div>
 
+        <!-- Item Details Page -->
         <div id="item-details-page" class="page-view hidden py-24 px-6 max-w-7xl mx-auto">
-            <div class="flex flex-col md:flex-row gap-16">
-                <div class="md:w-1/2 bg-gray-50 aspect-square flex items-center justify-center border overflow-hidden rounded-xl">
-                    <img id="p-image" src="" class="w-full h-full object-cover transition-all duration-300">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
+                <div class="bg-gray-50 rounded-2xl overflow-hidden aspect-square border border-gray-100">
+                    <img id="p-image" src="" class="w-full h-full object-cover">
                 </div>
-                <div class="md:w-1/2 flex flex-col justify-center">
-                    <nav class="mb-8 text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                        <a href="#" onclick="showPage('shop-all-page'); return false;" class="hover:text-black underline">Inventory</a> / <span id="p-cat-label">Product</span>
-                    </nav>
-                    <h1 id="p-name" class="text-5xl font-black uppercase tracking-tighter mb-4"></h1>
-                    <div class="flex items-baseline space-x-4 mb-8">
-                        <span id="p-sale" class="text-3xl font-black"></span>
-                        <span id="p-original" class="text-lg text-gray-400 line-through font-medium"></span>
+                <div class="sticky top-32">
+                    <span id="p-cat-label" class="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-4 block"></span>
+                    <h1 id="p-name" class="text-5xl font-black tracking-tighter mb-6 uppercase"></h1>
+                    
+                    <div class="flex items-center space-x-4 mb-8">
+                        <span id="p-sale" class="text-3xl font-black text-red-600"></span>
+                        <span id="p-original" class="text-xl font-bold text-gray-300 line-through"></span>
                     </div>
                     
-                    <div id="variant-selectors" class="mb-8 hidden"></div>
+                    <p id="p-desc" class="text-gray-500 leading-relaxed text-lg mb-12"></p>
                     
-                    <p id="p-desc" class="text-gray-600 text-lg leading-relaxed mb-12 max-w-md"></p>
-                    <button id="p-add-btn" class="w-full bg-black text-white py-6 font-bold uppercase tracking-widest hover:bg-gray-800 transition shadow-2xl">Secure Item</button>
+                    <div class="space-y-6">
+                        <button id="p-add-btn" class="w-full bg-black text-white py-6 font-bold uppercase tracking-widest hover:bg-gray-800 active:scale-[0.98] transition shadow-2xl flex items-center justify-center space-x-4">
+                            <span>Add To Cart</span>
+                            <span class="x-mark italic">X</span>
+                        </button>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-center text-gray-400">Order Limit: One item per order</p>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <!-- Support Page -->
         <div id="contact-page" class="page-view hidden py-24 px-6 max-w-2xl mx-auto">
-            <h1 class="text-5xl font-black uppercase tracking-tighter mb-12">Global Support</h1>
-            <form class="space-y-8" onsubmit="event.preventDefault(); alert('Request logged.');">
+            <h1 class="text-5xl font-black uppercase tracking-tighter mb-4">Support Hub</h1>
+            <p class="text-[10px] font-black uppercase tracking-widest text-red-600 mb-12">Note: All sales final. No refund policy strictly enforced.</p>
+            
+            <form class="space-y-8" onsubmit="event.preventDefault(); alert('Inquiry transmitted.');">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <input type="text" placeholder="Full Name" required class="w-full border-b border-black py-4 outline-none font-medium">
                     <input type="email" placeholder="Electronic Mail" required class="w-full border-b border-black py-4 outline-none font-medium">
                 </div>
-                <textarea placeholder="Message Body" rows="5" required class="w-full border-b border-black py-4 outline-none font-medium resize-none"></textarea>
-                <button class="bg-black text-white px-12 py-5 font-bold uppercase tracking-widest hover:bg-gray-800 transition">Submit Request</button>
+                <textarea placeholder="Technical Inquiry / Support Detail" rows="5" required class="w-full border-b border-black py-4 outline-none font-medium resize-none"></textarea>
+                <button class="bg-black text-white px-12 py-5 font-bold uppercase tracking-widest hover:bg-gray-800 transition">Transmit Inquiry</button>
             </form>
         </div>
     </main>
@@ -481,13 +475,14 @@
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
             <div class="md:col-span-2">
                 <img src="Images/logo.png" class="h-6 mb-8 invert" onerror="this.src='https://via.placeholder.com/150x40/000/fff?text=SYNAPTIX'">
-                <p class="text-gray-500 text-sm max-w-xs leading-relaxed uppercase tracking-widest font-bold">High-capacity inventory status. Optimized for the modern pioneer.</p>
+                <p class="text-gray-500 text-sm max-w-xs leading-relaxed uppercase tracking-widest font-bold">Bridging the gap between organic atmosphere and synthetic precision.</p>
             </div>
             <div>
                 <h4 class="text-[11px] font-black uppercase tracking-[0.4em] mb-8">Directives</h4>
                 <nav class="flex flex-col space-y-4 text-xs font-bold uppercase tracking-widest text-gray-400">
                     <a href="#" onclick="showPage('home-page'); return false;" class="hover:text-white transition">Home</a>
                     <a href="#" onclick="showPage('shop-all-page'); return false;" class="hover:text-white transition">Inventory</a>
+                    <a href="#" onclick="showPage('contact-page'); return false;" class="hover:text-white transition">Support</a>
                 </nav>
             </div>
             <div>
@@ -496,6 +491,7 @@
         </div>
     </footer>
 
+    <!-- Cart Sidebar -->
     <div id="cart-overlay" class="fixed inset-0 bg-black/60 z-[60] hidden backdrop-blur-sm" onclick="toggleCart()"></div>
     <div id="cart-sidebar" class="fixed right-0 top-0 h-full w-full sm:w-[480px] bg-white z-[70] translate-x-full transition-transform duration-500 ease-in-out flex flex-col shadow-[-20px_0_50px_rgba(0,0,0,0.1)]">
         <div class="p-8 border-b flex justify-between items-center bg-gray-50">
@@ -505,14 +501,14 @@
         <div id="cart-content" class="flex-grow p-8 overflow-y-auto"></div>
         <div id="cart-checkout-section" class="p-8 border-t space-y-6 bg-white hidden">
             <div class="flex justify-between items-end">
-                <span class="text-[11px] font-black uppercase tracking-widest">Total</span>
+                <div>
+                    <span class="text-[11px] font-black uppercase tracking-widest">Total</span>
+                    <p class="text-[8px] font-bold uppercase text-red-600 tracking-tighter mt-1">No refund policy applies</p>
+                </div>
                 <span id="cart-subtotal" class="text-3xl font-black"></span>
             </div>
             <div id="paypal-button-container"></div>
         </div>
     </div>
-
 </body>
 </html>
-
-
