@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Listings | Inventory & Profit Analysis</title>
+    <title>Product Analysis | Jellyfish Humidifier</title>
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="../Images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -25,8 +25,8 @@
         }
 
         .image-container {
-            height: 240px;
-            border-radius: 1rem;
+            height: 320px;
+            border-radius: 1.5rem;
             overflow: hidden;
             background-color: #ffffff;
             display: flex;
@@ -41,129 +41,125 @@
         }
 
         .image-container img {
-            max-width: 85%;
-            max-height: 85%;
+            max-width: 80%;
+            max-height: 80%;
             object-fit: contain;
             filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04));
         }
 
         .custom-gradient {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
         }
-        
-        .card-blur {
-            backdrop-filter: blur(8px);
+
+        .source-link {
+            word-break: break-all;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
     </style>
 </head>
 <body class="antialiased text-slate-900 p-4 md:p-8 lg:p-12">
 
-    <div class="max-w-7xl mx-auto">
+    <div class="max-w-4xl mx-auto">
         <!-- Header Section -->
-        <header class="mb-16 text-center space-y-4">
-            <div class="inline-flex items-center px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-700 text-sm font-semibold tracking-wide uppercase">
-                2026 Market Insights
+        <header class="mb-12 text-center space-y-4">
+            <div class="inline-flex items-center px-4 py-1.5 rounded-full bg-blue-100 text-blue-700 text-sm font-semibold tracking-wide uppercase">
+                Active Inventory Item
             </div>
             <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
-                Inventory & Profit <span class="text-emerald-600">Analysis</span>
+                Product <span class="text-blue-600">Analysis</span>
             </h1>
             <p class="text-lg text-slate-500 max-w-2xl mx-auto">
-                Detailed comparison of sourcing costs versus retail market value to identify high-margin opportunities for the current year.
+                Tracking margins and performance for current inventory stock.
             </p>
         </header>
 
-        <!-- Product Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+        <!-- Product Focus Area -->
+        <div class="flex flex-col md:flex-row gap-8 items-start justify-center">
             
-            <!-- UFO Drone Card -->
-            <div class="product-card bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col relative">
-                <div class="absolute top-8 right-8 z-10">
-                    <span class="px-3 py-1 bg-emerald-500 text-white text-xs font-bold rounded-full shadow-lg">New Arrival</span>
+            <!-- Jellyfish Humidifier Card -->
+            <div class="product-card bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl flex flex-col relative w-full max-w-md">
+                <div class="absolute top-10 right-10 z-10">
+                    <span class="px-4 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-full shadow-lg">Featured Item</span>
                 </div>
                 
                 <div class="image-container mb-8">
-                    <img src="../Images/pr2.png" alt="UFO Drone" onerror="this.src='https://placehold.co/400x400/f1f5f9/64748b?text=UFO+Drone'">
+                    <img src="../Images/pr1.png" alt="Jellyfish Humidifier" onerror="this.src='https://placehold.co/400x400/f1f5f9/64748b?text=Jellyfish+Humidifier'">
                 </div>
                 
-                <div class="flex justify-between items-end mb-6">
+                <div class="flex justify-between items-end mb-8">
                     <div>
-                        <h2 class="text-2xl font-bold text-slate-800 leading-tight">UFO Drone</h2>
-                        <p class="text-sm font-medium text-slate-400 uppercase tracking-widest mt-1">Gadgets & Tech</p>
-                    </div>
-                    <div class="text-right">
-                        <span class="block text-[10px] text-slate-400 uppercase font-bold tracking-tighter">Unit Cost</span>
-                        <span class="text-2xl font-black text-slate-900">$20</span>
+                        <h2 class="text-3xl font-bold text-slate-800 leading-tight">Jellyfish Humidifier</h2>
+                        <p class="text-sm font-medium text-slate-400 uppercase tracking-widest mt-1">Home & Wellness</p>
                     </div>
                 </div>
 
-                <div class="space-y-3 mb-8 p-5 bg-slate-50 rounded-2xl border border-slate-100">
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="text-slate-500">Retail MSRP:</span>
-                        <span class="text-slate-400 font-medium line-through decoration-slate-300">$89.99</span>
+                <!-- Financial Stats -->
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 text-center">
+                        <span class="block text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1">Buy Price</span>
+                        <span class="text-2xl font-black text-slate-900">$17.23</span>
                     </div>
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="text-slate-500 italic font-medium">Quick Resell:</span>
-                        <span class="text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-md">$50.00</span>
-                    </div>
-                    <div class="pt-3 border-t border-slate-200 flex justify-between items-center">
-                        <span class="text-sm font-bold text-slate-700 uppercase">Est. Profit:</span>
-                        <span class="text-xl font-bold text-emerald-600">+$30.00</span>
+                    <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 text-center">
+                        <span class="block text-[10px] text-blue-400 uppercase font-bold tracking-wider mb-1">Sell Price</span>
+                        <span class="text-2xl font-black text-blue-700">$34.99</span>
                     </div>
                 </div>
 
-                <a href="https://www.kohls.com/product/prd-7413264/zummy-flying-mini-ufo-toy-for-kids-with-rgb-lights.jsp" target="_blank" class="mt-auto w-full inline-flex justify-center items-center gap-2 bg-slate-900 text-white py-4 rounded-xl font-semibold hover:bg-slate-800 transition-all active:scale-[0.98]">
-                    Source Details
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                <div class="p-6 rounded-2xl bg-emerald-50 border border-emerald-100 mb-8">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="text-sm font-bold text-emerald-800 uppercase tracking-tight">Total Profit</span>
+                            <p class="text-xs text-emerald-600 font-medium">103% Return on Investment</p>
+                        </div>
+                        <span class="text-3xl font-black text-emerald-600">+$17.76</span>
+                    </div>
+                </div>
+
+                <a href="https://www.aliexpress.us/item/3256807715574853.html" target="_blank" class="w-full inline-flex justify-center items-center gap-2 bg-slate-900 text-white py-5 rounded-2xl font-bold hover:bg-slate-800 transition-all active:scale-[0.98] shadow-lg shadow-slate-200">
+                    Buy Again on AliExpress
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                 </a>
             </div>
 
-            <!-- AirPods Card -->
-            <div class="product-card bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col relative">
-                <div class="absolute top-8 right-8 z-10">
-                    <span class="px-3 py-1 bg-emerald-500 text-white text-xs font-bold rounded-full shadow-lg">High Margin</span>
-                </div>
-                
-                <div class="image-container mb-8">
-                    <img src="../Images/pr1.png" alt="AirPods Pro" onerror="this.src='https://placehold.co/400x400/f1f5f9/64748b?text=AirPods+Pro'">
-                </div>
-                
-                <div class="flex justify-between items-end mb-6">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-800 leading-tight">AirPods</h2>
-                        <p class="text-sm font-medium text-slate-400 uppercase tracking-widest mt-1">Wireless Audio</p>
-                    </div>
-                    <div class="text-right">
-                        <span class="block text-[10px] text-slate-400 uppercase font-bold tracking-tighter">Unit Cost</span>
-                        <span class="text-2xl font-black text-slate-900">$18</span>
-                    </div>
-                </div>
-
-                <div class="space-y-3 mb-8 p-5 bg-slate-50 rounded-2xl border border-slate-100">
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="text-slate-500">Retail MSRP:</span>
-                        <span class="text-slate-400 font-medium line-through decoration-slate-300">$129.00</span>
-                    </div>
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="text-slate-500 italic font-medium">Quick Resell:</span>
-                        <span class="text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-md">$65.00</span>
-                    </div>
-                    <div class="pt-3 border-t border-slate-200 flex justify-between items-center">
-                        <span class="text-sm font-bold text-slate-700 uppercase">Est. Profit:</span>
-                        <span class="text-xl font-bold text-emerald-600">+$47.00</span>
+            <!-- Sourcing Information Sidebar -->
+            <div class="w-full max-w-sm space-y-6">
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-md">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.828a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                        Supplier Details
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Source URL</p>
+                            <p class="text-sm text-blue-600 hover:underline source-link mt-1">
+                                <a href="https://www.aliexpress.us/item/3256807715574853.html">aliexpress.us/item/3256807715574853.html</a>
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-slate-50">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Estimated Shipping</p>
+                            <p class="text-sm text-slate-600 mt-1">Standard Shipping Available</p>
+                        </div>
+                        <div class="pt-4 border-t border-slate-50">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Notes</p>
+                            <p class="text-sm text-slate-600 mt-1 italic">High margin item. Watch for seasonal price drops below $17.</p>
+                        </div>
                     </div>
                 </div>
 
-                <a href="https://www.dhgate.com/product/p9-pro-max-wireless-over-ear-bluetooth-adjustable/954740614.html" target="_blank" class="mt-auto w-full inline-flex justify-center items-center gap-2 bg-slate-900 text-white py-4 rounded-xl font-semibold hover:bg-slate-800 transition-all active:scale-[0.98]">
-                    Source Details
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                </a>
+                <div class="bg-indigo-600 p-6 rounded-3xl text-white shadow-lg">
+                    <h3 class="font-bold mb-2">Inventory Alert</h3>
+                    <p class="text-sm text-indigo-100 opacity-90">Current stock levels are healthy. Consider re-ordering when stock hits < 5 units.</p>
+                </div>
             </div>
 
         </div>
 
         <!-- Summary Footer -->
         <footer class="mt-16 pt-8 border-t border-slate-200 text-center text-slate-400 text-sm">
-            <p>&copy; 2026 Product Analysis Dashboard. All margins are estimates based on secondary market trends.</p>
+            <p>&copy; 2026 Product Analysis Dashboard. Linked to AliExpress Sourcing Data.</p>
         </footer>
     </div>
 
