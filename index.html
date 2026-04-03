@@ -3,664 +3,512 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synaptix AgenciesTM</title>
+    <title>Synaptix Official Store™</title>
     <link rel="icon" type="image/png" href="Images/favicon.png">
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17824729040"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-17824729040');
+    </script>
+    
+    <!-- PayPal SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=BAAAlaRxA3KbFZr2em3TUeirbZdGSngwcyHMItxDS_YPYIFuSH1BfIKdY5wRjmhJMC0XvPmC7t0Lh5S57c&components=hosted-buttons&enable-funding=venmo&currency=USD"></script>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        /* (same styles as before, unchanged for brevity) */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #000000;
-            color: #ffffff;
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            background-color: #ffffff; 
+            overflow-x: hidden;
         }
-        .page-content {
+
+        .page-view { transition: opacity 0.3s ease; }
+        
+        .x-mark {
+            color: #ef4444;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 900;
+        }
+
+        .nav-link.active {
+            text-decoration: underline;
+            text-underline-offset: 8px;
+            text-decoration-thickness: 2px;
+            color: black;
+        }
+
+        #cart-content::-webkit-scrollbar { width: 4px; }
+        #cart-content::-webkit-scrollbar-track { background: #f1f1f1; }
+        #cart-content::-webkit-scrollbar-thumb { background: #000; }
+
+        .paypal-wrapper { width: 100%; min-height: 50px; }
+        
+        .account-dropdown {
             display: none;
-            flex: 1;
-            animation: fadeIn 0.4s ease-out forwards;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            border: 1px solid black;
+            padding: 1rem;
+            min-width: 220px;
+            z-index: 100;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
-        .page-content.active {
+
+        .account-container:hover .account-dropdown {
             display: block;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        
+        .header-main {
+            transition: top 0.3s ease;
         }
-        nav {
-            height: 80px;
-            backdrop-filter: blur(12px);
-            background-color: rgba(0, 0, 0, 0.7);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .btn-black {
-            background: white;
-            color: black;
-            padding: 0.6rem 1.5rem;
-            border-radius: 9999px;
-            font-weight: 700;
-            transition: 0.3s;
-            cursor: pointer;
-            border: none;
-        }
-        .btn-outline {
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 0.75rem 1.5rem;
-            border-radius: 9999px;
-            font-weight: 700;
-            transition: 0.3s;
-            cursor: pointer;
-            background: transparent;
-            color: white;
-        }
-        .plan-card {
-            background: #111;
-            border: 1px solid #222;
-            padding: 2rem;
-            border-radius: 24px;
-            cursor: pointer;
-            transition: 0.3s;
-            text-align: left;
-        }
-        .plan-card.selected {
-            border-color: #fff;
-            background: #1a1a1a;
-            box-shadow: 0 0 20px rgba(255,255,255,0.05);
-        }
-        .app-card {
-            background: #111;
-            border: 1px solid #222;
-            border-radius: 24px;
-            padding: 1.5rem;
-        }
-        .tag {
-            font-size: 9px;
-            font-weight: 800;
-            text-transform: uppercase;
-            padding: 4px 10px;
-            border-radius: 6px;
-            background: rgba(255,255,255,0.05);
-            color: rgba(255,255,255,0.7);
-        }
-        .tag.active {
-            background: #fff;
-            color: #000;
-        }
-        input, select {
-            background: #111 !important;
-            border: 1px solid #222 !important;
-            color: white !important;
-            transition: border-color 0.2s;
-        }
-        input:focus {
-            border-color: #555 !important;
-            outline: none;
-        }
-        .admin-table th {
-            text-align: left;
-            padding: 12px;
-            color: #666;
-            font-size: 10px;
-            text-transform: uppercase;
-            border-bottom: 1px solid #222;
-        }
-        .admin-table td {
-            padding: 16px 12px;
-            border-bottom: 1px solid #111;
-        }
-        .checkbox-card {
-            background: #111;
-            border: 1px solid #222;
-            padding: 16px;
-            border-radius: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: 0.2s;
-        }
-        .checkbox-card.selected {
-            border-color: white;
-            background: #1a1a1a;
-        }
-        .checkbox-card.disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 0.6s linear infinite;
-            margin-left: 8px;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+
+        .cart-icon {
+            width: 18px;
+            height: 18px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z' /%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
         }
     </style>
-</head>
-<body>
 
-    <nav class="flex items-center justify-between px-6 md:px-12">
-        <div id="main-logo" class="text-2xl font-black tracking-tighter cursor-pointer select-none" onclick="handleLogoClick()">
-            synaptixsales
-        </div>
-        <div class="hidden lg:flex items-center space-x-8">
-            <span class="text-[10px] font-bold uppercase tracking-widest cursor-pointer opacity-60 hover:opacity-100" onclick="showPage('home')">Home</span>
-            <span class="text-[10px] font-bold uppercase tracking-widest cursor-pointer opacity-60 hover:opacity-100" onclick="showPage('support')">Support</span>
-            <span class="auth-only hidden text-[10px] font-bold uppercase tracking-widest cursor-pointer opacity-60 hover:opacity-100" onclick="showPage('apps')">Dashboard</span>
-            <div class="h-4 w-[1px] bg-white/10 mx-2"></div>
-            <span id="user-display" class="text-[10px] font-bold text-gray-500 uppercase tracking-widest hidden"></span>
-            <button id="nav-auth-btn" onclick="showPage('login')" class="btn-black text-[10px] uppercase tracking-widest px-5">Login</button>
-            <button id="logout-btn" onclick="handleLogout()" class="btn-outline text-[10px] uppercase tracking-widest px-5 hidden">Logout</button>
-        </div>
-    </nav>
-
-    <!-- ADMIN AUTH -->
-    <div id="admin-auth" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[200] hidden flex items-center justify-center p-6">
-        <div class="w-full max-w-sm text-center">
-            <h2 class="text-2xl font-black mb-6">Admin Terminal</h2>
-            <input type="password" id="admin-pass-input" class="w-full p-4 rounded-2xl outline-none mb-4 text-center text-xl tracking-widest" placeholder="••••••••">
-            <div class="flex gap-3">
-                <button onclick="hideAdminAuth()" class="flex-1 btn-outline py-3">Cancel</button>
-                <button onclick="verifyAdmin()" class="flex-1 btn-black py-3">Enter</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ADMIN PANEL -->
-    <div id="admin-panel" class="page-content bg-[#050505]">
-        <div class="container mx-auto px-8 py-20">
-            <div class="flex justify-between items-end mb-12">
-                <div>
-                    <span class="tag active mb-2">Master Terminal</span>
-                    <h2 class="text-5xl font-extrabold tracking-tight">SynaptixSales Directory</h2>
-                </div>
-                <button onclick="showPage('home')" class="btn-outline text-xs">Exit Admin</button>
-            </div>
-            <div class="bg-[#111] rounded-[32px] border border-[#222] overflow-x-auto">
-                <table class="w-full admin-table min-w-[800px]">
-                    <thead>
-                        <tr>
-                            <th>Name / Email</th>
-                            <th>Plan</th>
-                            <th>Apps</th>
-                            <th>Paid</th>
-                            <th>Action</th>
-                        </thead>
-                    <tbody id="user-list-body"></tbody>
-                  </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- HOME -->
-    <div id="home" class="page-content active">
-        <section class="flex flex-col items-center justify-center text-center px-6 py-32 min-h-[80vh]">
-            <h1 class="text-6xl md:text-8xl font-extrabold tracking-tighter max-w-4xl mb-8 leading-none">
-                Elite Agency <span class="text-gray-500">Infrastructure.</span>
-            </h1>
-            <p class="text-gray-400 text-lg md:text-xl max-w-2xl mb-12">
-                Subscribe to manage your advertising stack and domain infrastructure in one unified hub.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4">
-                <button onclick="showPage('signup')" class="btn-black px-12 py-5 text-lg">Subscribe Now</button>
-                <button onclick="showPage('login')" class="btn-outline px-12 py-5 text-lg">Login</button>
-            </div>
-        </section>
-    </div>
-
-    <!-- SUPPORT PAGE -->
-    <div id="support" class="page-content">
-        <div class="container mx-auto px-6 py-20">
-            <div class="max-w-2xl mx-auto text-center">
-                <h2 class="text-4xl font-bold mb-6">Support Center</h2>
-                <p class="text-gray-400 mb-8">
-                    Need help? Our team is ready to assist you.<br>
-                    Email us at <a href="mailto:support@synaptixsales.com" class="text-white underline">support@synaptixsales.com</a>
-                </p>
-                <p class="text-gray-500 text-sm">
-                    For urgent inquiries, please use the contact form in your dashboard after subscribing.
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- SIGNUP FLOW (no free plan) -->
-    <div id="signup" class="page-content">
-        <div class="container mx-auto px-6 py-20">
-            <!-- STEP 1: PLAN -->
-            <div id="signup-step-1" class="max-w-5xl mx-auto text-center">
-                <h2 class="text-4xl font-bold mb-4">Choose Your Plan</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12 mt-12">
-                    <div class="plan-card" onclick="selectPlan('Pro')">
-                        <div class="text-xs font-bold uppercase text-gray-500 mb-2">Pro</div>
-                        <div class="text-3xl font-black mb-4">$20<span class="text-sm">/mo</span></div>
-                        <p class="text-[10px] text-gray-400">• Select 3 Apps</p>
-                    </div>
-                    <div class="plan-card" onclick="selectPlan('Advanced')">
-                        <div class="text-xs font-bold uppercase text-gray-500 mb-2">Advanced</div>
-                        <div class="text-3xl font-black mb-4">$50<span class="text-sm">/mo</span></div>
-                        <p class="text-[10px] text-gray-400">• Select 5 Apps</p>
-                    </div>
-                    <div class="plan-card" onclick="selectPlan('Enterprise')">
-                        <div class="text-xs font-bold uppercase text-gray-500 mb-2">Enterprise</div>
-                        <div class="text-3xl font-black mb-4">$100<span class="text-sm">/mo</span></div>
-                        <p class="text-[10px] text-gray-400">• Unlimited Apps</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- STEP 2: INFO -->
-            <div id="signup-step-2" class="max-w-md mx-auto bg-[#111] p-10 rounded-[40px] border border-[#222] hidden">
-                <h2 class="text-3xl font-bold mb-2">Profile Details</h2>
-                <p class="text-gray-500 text-sm mb-8" id="info-plan-label">Plan: Pro</p>
-                <div class="space-y-4">
-                    <div class="flex gap-4">
-                        <input type="text" id="reg-first" placeholder="First Name" class="w-full p-4 rounded-xl">
-                        <input type="text" id="reg-last" placeholder="Last Name" class="w-full p-4 rounded-xl">
-                    </div>
-                    <div class="pt-2">
-                        <label class="block text-[10px] font-bold uppercase text-gray-500 mb-2">Login Credentials</label>
-                        <input type="email" id="reg-email" placeholder="Email" class="w-full p-4 rounded-xl mb-3">
-                        <input type="password" id="reg-pass" placeholder="Create Password" class="w-full p-4 rounded-xl">
-                    </div>
-                    <div class="flex gap-4 pt-4">
-                        <button onclick="goToSignupStep(1)" class="flex-1 btn-outline text-xs">Back</button>
-                        <button onclick="goToSignupStep(3)" class="flex-1 btn-black text-xs">Next</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- STEP 3: APPS + PAYMENT -->
-            <div id="signup-step-3" class="max-w-2xl mx-auto bg-[#111] p-10 rounded-[40px] border border-[#222] hidden">
-                <h2 class="text-3xl font-bold mb-2">Select Apps</h2>
-                <p class="text-gray-500 text-sm mb-6" id="app-limit-msg">Choose your stack</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8" id="app-grid-inject"></div>
-                
-                <!-- Email notice -->
-                <div class="bg-black/40 border border-white/10 rounded-xl p-4 mb-6 text-center">
-                    <p class="text-sm text-gray-300">
-                        📧 After successful payment, you'll receive an email with a custom HTML dashboard file to monitor your stats and additional details.
-                    </p>
-                </div>
-
-                <div id="paypal-button-container" class="mt-6"></div>
-                <div class="flex gap-4 mt-4">
-                    <button onclick="goToSignupStep(2)" class="flex-1 btn-outline text-xs">Back</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- LOGIN -->
-    <div id="login" class="page-content">
-        <div class="flex items-center justify-center py-32 px-6">
-            <div class="w-full max-w-md bg-[#111] p-10 rounded-[40px] border border-[#222]">
-                <h2 class="text-3xl font-bold mb-6 text-center">Login</h2>
-                <input type="email" id="login-email" placeholder="Email" class="w-full p-4 rounded-xl mb-4">
-                <input type="password" id="login-pass" placeholder="Password" class="w-full p-4 rounded-xl mb-6">
-                <button onclick="handleLogin()" class="w-full btn-black py-4 mb-3">Sign In</button>
-                <p class="text-center text-[10px] text-gray-500 mt-6 uppercase font-bold cursor-pointer hover:text-white" onclick="showPage('signup')">New? Subscribe</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- DASHBOARD -->
-    <div id="apps" class="page-content bg-[#0a0a0a]">
-        <div class="container mx-auto px-8 py-20">
-            <div class="flex justify-between items-end mb-12">
-                <div>
-                    <h2 class="text-4xl font-black tracking-tight" id="dash-name">Welcome</h2>
-                    <p class="text-gray-500" id="dash-plan">Syncing Profile...</p>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                <div class="app-card border-none bg-[#111]">
-                    <p class="text-[10px] text-gray-500 uppercase font-bold mb-2">Growth Rate</p>
-                    <h3 class="text-5xl font-black text-white" id="dash-growth">0%</h3>
-                </div>
-                <div class="app-card border-none bg-[#111]">
-                    <p class="text-[10px] text-gray-500 uppercase font-bold mb-2">Apps Online</p>
-                    <h3 class="text-5xl font-black text-white" id="dash-count">0</h3>
-                </div>
-                <div class="app-card border-none bg-[#111]">
-                    <p class="text-[10px] text-gray-500 uppercase font-bold mb-2">Account Health</p>
-                    <h3 class="text-2xl font-black text-white py-3">Stable</h3>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="dash-apps-grid"></div>
-        </div>
-    </div>
-
-    <!-- PayPal SDK -->
-    <script src="https://www.paypal.com/sdk/js?client-id=ATo3MQHysky1lSajTlweaN_xgmu2mISeKDqsxLsfVSg3bnXHHZZt8plNI1qbtY5OKD1v-FeOPIScIT4h&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDNTBfjq7L72CW6FKqWxsDCSbMPUlE3yI0",
-            authDomain: "synaptixagencies.firebaseapp.com",
-            projectId: "synaptixagencies",
-            storageBucket: "synaptixagencies.firebasestorage.app",
-            messagingSenderId: "324865263158",
-            appId: "1:324865263158:web:ce1b241602d56bcc84ba97",
-            measurementId: "G-E4EM8N2ETV"
-        };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = "synaptix";
-
-        const getProfileDoc = (uid) => doc(db, 'artifacts', appId, 'users', uid, 'profile', 'data');
-        const getDirectoryDoc = (uid) => doc(db, 'artifacts', appId, 'public', 'data', 'directory', uid);
-
-        const APPS = [
-            { id: 'insta_ads', name: 'Instagram Ads', color: '#E1306C' },
-            { id: 'tiktok_ads', name: 'TikTok Ads', color: '#000000' },
-            { id: 'youtube_ads', name: 'YouTube Ads', color: '#FF0000' },
-            { id: 'fb_ads', name: 'Facebook Ads', color: '#1877F2' },
-            { id: 'google_ads', name: 'Google Ads', color: '#4285F4' },
-            { id: 'google_analytics', name: 'Google Analytics', color: '#F4B400' },
-            { id: 'web_support', name: 'Website + Customer Support', color: '#00C2FF' },
-            { id: 'custom_domains', name: 'Custom Domains', color: '#ffffff', desc: 'Email & Website Mapping' }
+    <script>
+        const PRODUCTS = [
+            {
+                id: 'jellyfish-humidifier',
+                name: 'Jellyfish Humidifier',
+                category: 'Home Tech',
+                originalPrice: 45.00,
+                salePrice: 34.99,
+                image: 'Images/pr1.png',
+                desc: 'Experience soothing moisture with a unique jellyfish smoke ring effect. Perfect for meditation, sleep, and creating a futuristic atmosphere in any room.',
+                paypalId: 'KK8U7NW44WEBW'
+            }
         ];
 
-        const LIMITS = { 'Pro': 3, 'Advanced': 5, 'Enterprise': 100 };
-        let selPlan = 'Pro';
-        let selApps = [];
-        let logoTimer, logoCount = 0;
+        let cartItems = [];
+        let currentFilter = 'All';
+        let showcaseClicks = 0;
 
-        const paypalPlans = {
-            'Pro': { planId: 'P-2U900587UA058073NNHAAEKQ', containerId: 'paypal-button-container-pro' },
-            'Advanced': { planId: 'P-08366263J4503371SNHAAGOQ', containerId: 'paypal-button-container-advanced' },
-            'Enterprise': { planId: 'P-0JT070210E727122GNHAAG3I', containerId: 'paypal-button-container-enterprise' }
-        };
+        function init() {
+            loadCart();
+            checkPortalAccess();
+            showPage('home-page');
+        }
 
-        // Formspree endpoint – updated with your URL
-        const FORMSPREE_ENDPOINT = 'https://formspree.io/f/maqpgwoy';
+        function closeBanner() {
+            const banner = document.getElementById('top-banner');
+            const header = document.getElementById('header-main');
+            if (banner) banner.style.display = 'none';
+            if (header) header.style.top = '0';
+        }
 
-        async function sendCustomerEmail(firstName, lastName, email, password, apps, plan) {
-            const formData = new FormData();
-            formData.append('name', `${firstName} ${lastName}`);
-            formData.append('email', email);
-            formData.append('password', password);
-            formData.append('plan', plan);
-            formData.append('apps', apps.join(', '));
+        function handleShowcaseClick() {
+            showcaseClicks++;
+            if (showcaseClicks === 3) {
+                document.getElementById('portal-modal').classList.remove('hidden');
+                showcaseClicks = 0;
+            }
+        }
 
+        function verifyPortalPassword() {
+            const pass = document.getElementById('portal-pass-input').value;
+            if (pass === 'w33pr0m3t3R*') {
+                localStorage.setItem('synaptixSellerAccess', 'true');
+                alert('Success: Access granted to seller portal.');
+                document.getElementById('portal-modal').classList.add('hidden');
+                checkPortalAccess();
+            } else {
+                alert('Invalid credentials.');
+            }
+        }
+
+        function checkPortalAccess() {
+            const hasAccess = localStorage.getItem('synaptixSellerAccess') === 'true';
+            const portalBtn = document.getElementById('seller-portal-btn');
+            if (hasAccess && portalBtn) {
+                portalBtn.classList.remove('hidden');
+            }
+        }
+
+        function clearSiteCache() {
+            localStorage.clear();
+            location.reload();
+        }
+
+        function loadCart() {
             try {
-                const response = await fetch(FORMSPREE_ENDPOINT, {
-                    method: 'POST',
-                    body: formData,
-                    headers: { 'Accept': 'application/json' }
-                });
-                if (response.ok) {
-                    console.log('Customer email sent');
+                const storedCart = localStorage.getItem('synaptixCart');
+                if (storedCart) cartItems = JSON.parse(storedCart);
+                if (cartItems.length > 1) cartItems = [cartItems[0]];
+            } catch (e) { cartItems = []; }
+            renderCart();
+            updateCartIconCount();
+        }
+
+        function saveCart() {
+            localStorage.setItem('synaptixCart', JSON.stringify(cartItems));
+            updateCartIconCount();
+        }
+
+        function updateCartIconCount() {
+            const totalItems = cartItems.length;
+            const badge = document.getElementById('cart-count-badge');
+            if (badge) {
+                badge.textContent = `(${totalItems})`;
+                if (totalItems > 0) {
+                    badge.classList.remove('opacity-0');
+                    badge.classList.add('opacity-100');
                 } else {
-                    console.error('Email send failed:', response.status);
+                    badge.classList.add('opacity-0');
+                    badge.classList.remove('opacity-100');
                 }
-            } catch (err) {
-                console.error('Error sending email:', err);
             }
         }
 
-        async function createUserAfterPayment(email, password, firstName, lastName) {
-            try {
-                const cred = await createUserWithEmailAndPassword(auth, email, password);
-                const uid = cred.user.uid;
-                const appData = {};
-                selApps.forEach(appId => { appData[appId] = {}; });
-                await setDoc(getDirectoryDoc(uid), {
-                    name: `${firstName} ${lastName}`,
-                    email: email,
-                    uid: uid,
-                    timestamp: Date.now(),
-                    plan: selPlan,
-                    paid: true
-                });
-                await setDoc(getProfileDoc(uid), {
-                    firstName: firstName,
-                    lastName: lastName,
-                    loginEmail: email,
-                    apps: selApps,
-                    plan: selPlan,
-                    growth: 0,
-                    appData: appData
-                });
+        function showPage(pageId, productId = null) {
+            document.querySelectorAll('.page-view').forEach(v => v.classList.add('hidden'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            
+            const target = document.getElementById(pageId);
+            if (target) target.classList.remove('hidden');
 
-                // Send email with customer details
-                await sendCustomerEmail(firstName, lastName, email, password, selApps, selPlan);
+            const nav = document.querySelector(`[data-nav="${pageId}"]`);
+            if (nav) nav.classList.add('active');
 
-                showPage('apps');
-            } catch (err) {
-                alert("Account creation failed: " + err.message);
-            }
+            if (pageId === 'item-details-page' && productId) renderProductDetails(PRODUCTS.find(p => p.id === productId));
+            if (pageId === 'shop-all-page') renderShopGrid();
+            
+            window.scrollTo(0,0);
         }
 
-        window.renderApps = () => {
-            const grid = document.getElementById('app-grid-inject');
-            const limit = LIMITS[selPlan];
-            grid.innerHTML = APPS.map(a => {
-                const isActive = selApps.includes(a.id);
-                const isBlocked = !isActive && selApps.length >= limit;
-                return `
-                    <div class="checkbox-card ${isActive ? 'selected' : ''} ${isBlocked ? 'disabled' : ''}" onclick="toggleApp('${a.id}', ${isBlocked})">
-                        <div class="w-5 h-5 rounded border border-gray-600 flex items-center justify-center">${isActive ? '✓' : ''}</div>
+        function renderShopGrid() {
+            const grid = document.getElementById('shop-grid');
+            const filtered = currentFilter === 'All' ? PRODUCTS : PRODUCTS.filter(p => p.category === currentFilter);
+            
+            grid.innerHTML = filtered.map(p => `
+                <div class="bg-white group cursor-pointer" onclick="showPage('item-details-page', '${p.id}')">
+                    <div class="relative aspect-square overflow-hidden bg-gray-100 rounded-lg">
+                        <img src="${p.image}" onerror="handleImageError(this, '${p.name}')" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-2 left-2 bg-white px-2 py-1 text-[10px] font-bold border border-black uppercase tracking-tighter">Sale <span class="x-mark italic">X</span></div>
+                    </div>
+                    <div class="mt-4 flex justify-between items-start">
                         <div>
-                            <div class="text-sm font-bold">${a.name}</div>
-                            ${a.desc ? `<div class="text-[8px] text-gray-500">${a.desc}</div>` : ''}
+                            <h3 class="text-sm font-medium text-gray-900">${p.name}</h3>
+                            <p class="mt-1 text-xs text-gray-500">${p.category}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-bold text-red-600">$${p.salePrice.toFixed(2)}</p>
+                            <p class="text-xs text-gray-400 line-through">$${p.originalPrice.toFixed(2)}</p>
                         </div>
                     </div>
-                `;
-            }).join('');
-            document.getElementById('app-limit-msg').innerText = `Limit: ${limit} app${limit > 1 ? 's' : ''}`;
-        };
+                </div>
+            `).join('');
+        }
 
-        window.toggleApp = (id, blocked) => {
-            if (blocked) return;
-            if (selApps.includes(id)) selApps = selApps.filter(x => x !== id);
-            else selApps.push(id);
-            renderApps();
-        };
-
-        window.selectPlan = (p) => {
-            selPlan = p;
-            selApps = [];
-            document.querySelectorAll('.plan-card').forEach(c => {
-                c.classList.toggle('selected', c.innerText.includes(p));
+        function setFilter(category) {
+            currentFilter = category;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                const isMatch = btn.dataset.cat === category;
+                btn.classList.toggle('border-black', isMatch);
+                btn.classList.toggle('text-black', isMatch);
+                btn.classList.toggle('border-transparent', !isMatch);
+                btn.classList.toggle('text-gray-400', !isMatch);
             });
-            document.getElementById('info-plan-label').innerText = `Plan: ${p}`;
-            renderApps();
-            goToSignupStep(2);
-        };
-
-        window.goToSignupStep = (s) => {
-            [1,2,3].forEach(n => document.getElementById(`signup-step-${n}`).classList.add('hidden'));
-            document.getElementById(`signup-step-${s}`).classList.remove('hidden');
-            if (s === 3) {
-                loadPayPalButton();
-            }
-        };
-
-        function loadPayPalButton() {
-            const container = document.getElementById('paypal-button-container');
-            container.innerHTML = '';
-
-            const plan = paypalPlans[selPlan];
-            if (!plan) {
-                alert("Invalid plan selection");
-                return;
-            }
-
-            const dynamicContainer = document.createElement('div');
-            dynamicContainer.id = plan.containerId;
-            container.appendChild(dynamicContainer);
-
-            paypal.Buttons({
-                style: {
-                    shape: 'pill',
-                    color: 'black',
-                    layout: 'vertical',
-                    label: 'subscribe'
-                },
-                createSubscription: function(data, actions) {
-                    return actions.subscription.create({
-                        plan_id: plan.planId
-                    });
-                },
-                onApprove: function(data, actions) {
-                    const f = document.getElementById('reg-first').value.trim();
-                    const l = document.getElementById('reg-last').value.trim();
-                    const e = document.getElementById('reg-email').value.trim();
-                    const p = document.getElementById('reg-pass').value;
-                    if (!f || !l || !e || !p) {
-                        alert("Please fill all details first");
-                        goToSignupStep(2);
-                        return;
-                    }
-                    createUserAfterPayment(e, p, f, l);
-                },
-                onError: function(err) {
-                    console.error(err);
-                    alert("Payment failed. Please try again.");
-                }
-            }).render(`#${plan.containerId}`);
+            renderShopGrid();
         }
 
-        // Admin functions (unchanged)
-        window.handleLogoClick = () => {
-            logoCount++;
-            clearTimeout(logoTimer);
-            if(logoCount >= 4) { 
-                document.getElementById('admin-auth').classList.remove('hidden'); 
-                logoCount = 0; 
-            } else {
-                logoTimer = setTimeout(() => logoCount = 0, 1000);
-            }
-        };
-
-        window.verifyAdmin = () => {
-            const pass = document.getElementById('admin-pass-input').value;
-            if(pass === 'w33pr0m3t3R*') {
-                document.getElementById('admin-auth').classList.add('hidden');
-                document.getElementById('admin-pass-input').value = '';
-                showPage('admin-panel');
-                loadAdminDir();
-            } else {
-                alert("Terminal access denied.");
-            }
-        };
-
-        async function loadAdminDir() {
-            const list = document.getElementById('user-list-body');
-            list.innerHTML = `    <tr><td colspan="5" class="text-center py-20">Loading...</td></tr>`;
-            try {
-                const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'directory'));
-                list.innerHTML = '';
-                if (snap.empty) {
-                    list.innerHTML = `    <tr><td colspan="5" class="text-center py-10">No users found.</td></tr>`;
-                    return;
-                }
-                for (const d of snap.docs) {
-                    const u = d.data();
-                    const pSnap = await getDoc(getProfileDoc(u.uid));
-                    const p = pSnap.data() || {};
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><div class="font-bold text-white text-sm">${u.name || 'Unknown'}</div><div class="text-[9px] text-gray-500">${u.email || ''}</div></td>
-                        <td><span class="tag active">${p.plan || 'Free'}</span></td>
-                        <td><div class="flex flex-wrap gap-1">${(p.apps || []).map(id => { const info = APPS.find(a => a.id === id); return `<span class="text-[8px] bg-white/5 border px-1 rounded">${info ? info.name : id}</span>`; }).join('')}</div></td>
-                        <td>${u.paid ? '✅' : '❌'}</td>
-                        <td><button onclick="alert('Edit coming soon')" class="text-[10px] uppercase font-bold text-white/40 hover:text-white">Manage</button></td>
-                    `;
-                    list.appendChild(tr);
-                }
-            } catch (err) {
-                list.innerHTML = `    <tr><td colspan="5" class="text-center text-red-500">Error: ${err.message}</td></tr>`;
-            }
+        function renderProductDetails(product) {
+            if (!product) return;
+            const img = document.getElementById('p-image');
+            img.src = product.image;
+            img.onerror = () => handleImageError(img, product.name);
+            
+            document.getElementById('p-name').innerHTML = `${product.name} <span class="x-mark italic text-2xl">X</span>`;
+            document.getElementById('p-original').textContent = `$${product.originalPrice.toFixed(2)}`;
+            document.getElementById('p-sale').textContent = `$${product.salePrice.toFixed(2)}`;
+            document.getElementById('p-desc').textContent = product.desc;
+            document.getElementById('p-cat-label').textContent = product.category;
+            document.getElementById('p-add-btn').onclick = () => addToCart(product.id);
         }
 
-        window.handleLogin = async () => {
-            const e = document.getElementById('login-email').value.trim();
-            const p = document.getElementById('login-pass').value;
-            try { await signInWithEmailAndPassword(auth, e, p); showPage('apps'); } catch(err) { alert("Login Error: " + err.message); }
-        };
+        function addToCart(productId) {
+            const product = PRODUCTS.find(p => p.id === productId);
+            if (!product) return;
+            cartItems = [{ ...product, qty: 1 }];
+            saveCart();
+            renderCart();
+            toggleCart(true); 
+        }
 
-        window.handleLogout = () => { signOut(auth); showPage('home'); };
-        window.hideAdminAuth = () => document.getElementById('admin-auth').classList.add('hidden');
-        window.showPage = (id) => {
-            if (id === 'signup') {
-                document.getElementById('reg-first').value = '';
-                document.getElementById('reg-last').value = '';
-                document.getElementById('reg-email').value = '';
-                document.getElementById('reg-pass').value = '';
-                selPlan = 'Pro';
-                selApps = [];
-                document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
-                document.querySelector('.plan-card').classList.add('selected');
-                renderApps();
-                goToSignupStep(1);
-            }
-            document.querySelectorAll('.page-content').forEach(p => p.classList.toggle('active', p.id === id));
-            window.scrollTo(0,0);
-        };
+        function removeItem() {
+            cartItems = [];
+            saveCart(); 
+            renderCart();
+        }
 
-        async function listenProfile(uid) {
-            onSnapshot(getProfileDoc(uid), (s) => {
-                if (s.exists()) {
-                    const d = s.data();
-                    document.getElementById('dash-name').innerHTML = `Hello, ${d.firstName}`;
-                    document.getElementById('dash-plan').innerHTML = `Plan: ${d.plan}`;
-                    document.getElementById('dash-growth').innerHTML = (d.growth || 0) + '%';
-                    document.getElementById('dash-count').innerHTML = (d.apps || []).length;
-                    const grid = document.getElementById('dash-apps-grid');
-                    grid.innerHTML = (d.apps || []).map(appId => {
-                        const app = APPS.find(a => a.id === appId);
-                        return `
-                            <div class="app-card border-white/5">
-                                <div class="w-8 h-8 rounded mb-4" style="background:${app?.color || '#333'}"></div>
-                                <div class="font-bold text-sm">${app?.name || appId}</div>
-                                <div class="flex gap-2 mt-4"><span class="tag active">Live</span></div>
+        function renderCart() {
+            const cartContent = document.getElementById('cart-content');
+            const cartSubtotal = document.getElementById('cart-subtotal');
+            const paypalContainer = document.getElementById('paypal-button-container');
+            let total = 0;
+            paypalContainer.innerHTML = ''; 
+            
+            if (cartItems.length === 0) {
+                cartContent.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full opacity-30 py-20 text-center">
+                        <svg class="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                        </svg>
+                        <p class="text-xs font-bold uppercase tracking-widest">Shopping Cart Empty</p>
+                    </div>`;
+                document.getElementById('cart-checkout-section').classList.add('hidden');
+            } else {
+                const item = cartItems[0];
+                total = item.salePrice;
+                document.getElementById('cart-checkout-section').classList.remove('hidden');
+                
+                cartContent.innerHTML = `
+                    <div class="group relative flex items-start space-x-4 mb-8 pb-8 border-b border-gray-100">
+                        <div class="w-24 h-24 bg-gray-50 overflow-hidden flex-shrink-0 border border-gray-100">
+                            <img src="${item.image}" onerror="handleImageError(this, '${item.name}')" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex justify-between items-start mb-1">
+                                <h3 class="text-[11px] font-black uppercase tracking-widest">${item.name} <span class="x-mark italic">X</span></h3>
+                                <button onclick="removeItem()" class="text-gray-300 hover:text-black transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
                             </div>
-                        `;
-                    }).join('');
+                            <p class="text-[10px] text-gray-400 uppercase font-bold mb-4">${item.category}</p>
+                            <div class="flex justify-between items-end">
+                                <span class="text-[10px] font-black uppercase text-gray-400">Qty: 1</span>
+                                <p class="text-sm font-black">$${total.toFixed(2)}</p>
+                            </div>
+                        </div>
+                    </div>`;
+                
+                const btnId = `paypal-container-${item.paypalId}`;
+                paypalContainer.innerHTML = `<div id="${btnId}" class="paypal-wrapper"></div>`;
+                if (window.paypal && window.paypal.HostedButtons) {
+                    window.paypal.HostedButtons({
+                        hostedButtonId: item.paypalId,
+                    }).render(`#${btnId}`);
                 }
-            }, e => console.error(e));
+            }
+            cartSubtotal.textContent = `$${total.toFixed(2)}`;
         }
 
-        onAuthStateChanged(auth, (user) => {
-            if (user && !user.isAnonymous) {
-                document.getElementById('user-display').innerText = user.email;
-                document.getElementById('user-display').classList.remove('hidden');
-                document.getElementById('nav-auth-btn').classList.add('hidden');
-                document.getElementById('logout-btn').classList.remove('hidden');
-                document.querySelectorAll('.auth-only').forEach(e => e.classList.remove('hidden'));
-                listenProfile(user.uid);
-            } else {
-                document.getElementById('user-display').classList.add('hidden');
-                document.getElementById('nav-auth-btn').classList.remove('hidden');
-                document.getElementById('logout-btn').classList.add('hidden');
-                document.querySelectorAll('.auth-only').forEach(e => e.classList.add('hidden'));
+        function toggleCart(forceOpen = false) {
+            const sidebar = document.getElementById('cart-sidebar');
+            const overlay = document.getElementById('cart-overlay');
+            if (forceOpen) { 
+                sidebar.classList.remove('translate-x-full'); 
+                overlay.classList.remove('hidden'); 
+            } else { 
+                sidebar.classList.toggle('translate-x-full'); 
+                overlay.classList.toggle('hidden'); 
             }
-        });
+        }
 
-        window.renderApps();
-        // Set default plan selected
-        document.querySelectorAll('.plan-card').forEach(c => {
-            if (c.innerText.includes('Pro')) c.classList.add('selected');
-        });
+        function handleImageError(img, productName) {
+            const svg = `<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#f3f4f6"/><text x="50%" y="50%" font-family="Arial" font-size="20" fill="#9ca3af" text-anchor="middle">${productName}</text></svg>`;
+            img.src = 'data:image/svg+xml;base64,' + btoa(svg);
+        }
+
+        window.onload = init;
     </script>
+</head>
+<body class="bg-white">
+
+    <!-- Secret Portal Modal -->
+    <div id="portal-modal" class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-6 hidden">
+        <div class="bg-white p-8 max-w-sm w-full border-4 border-black">
+            <h2 class="text-2xl font-black uppercase mb-6 tracking-tighter">Internal Access</h2>
+            <input type="password" id="portal-pass-input" placeholder="Password" class="w-full border-2 border-black p-4 mb-4 outline-none font-mono">
+            <button onclick="verifyPortalPassword()" class="w-full bg-black text-white py-4 font-bold uppercase tracking-widest hover:bg-gray-800 transition">Enter</button>
+            <button onclick="document.getElementById('portal-modal').classList.add('hidden')" class="w-full mt-2 text-[10px] uppercase font-bold text-gray-400 underline">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Hidden Seller Portal Entry -->
+    <a href="Pages/SynaptixPortal.html" id="seller-portal-btn" class="fixed bottom-8 right-8 z-[50] bg-black text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform hidden">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    </a>
+
+    <!-- Top Promo Banner -->
+    <div id="top-banner" class="bg-black text-white py-2 px-6 text-[11px] font-bold tracking-[0.2em] sticky top-0 z-50 uppercase border-b border-white/10 flex items-center justify-center">
+        <button onclick="closeBanner()" class="absolute left-4 text-white hover:text-red-500 transition-colors text-sm font-black">✕</button>
+        <div class="text-center px-8">Full Deployment Sequence Active <span class="x-mark italic text-sm mx-2">X</span> Inventory High</div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header id="header-main" class="header-main border-b sticky top-8 z-40 bg-white/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-12">
+                <a href="#" onclick="showPage('home-page'); return false;" class="flex items-center">
+                    <img src="Images/logo.png" alt="Synaptix" onerror="this.src='https://via.placeholder.com/150x40?text=SYNAPTIX'" class="h-6">
+                </a>
+                <nav class="hidden md:flex space-x-8 text-[11px] font-bold uppercase tracking-widest text-gray-400">
+                    <a href="#" data-nav="home-page" onclick="showPage('home-page'); return false;" class="nav-link hover:text-black transition">Home</a>
+                    <a href="#" data-nav="shop-all-page" onclick="showPage('shop-all-page'); return false;" class="nav-link hover:text-black transition">Shop All</a>
+                    <a href="#" data-nav="contact-page" onclick="showPage('contact-page'); return false;" class="nav-link hover:text-black transition">Support</a>
+                </nav>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <div class="relative account-container h-20 flex items-center px-2 cursor-pointer group">
+                    <div class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                        <svg class="w-6 h-6 text-gray-400 group-hover:text-black transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    </div>
+                    <div class="account-dropdown border-2 border-black">
+                        <p class="text-[10px] font-black uppercase text-gray-400 mb-4 border-b border-gray-100 pb-2">Account Management</p>
+                        <button onclick="clearSiteCache()" class="w-full text-left text-[11px] font-black uppercase tracking-widest text-red-600 hover:bg-red-50 p-3 transition border border-transparent hover:border-red-200 rounded">
+                            Delete Cache / Reset
+                        </button>
+                    </div>
+                </div>
+
+                <button id="cart-btn" onclick="toggleCart()" class="flex items-center bg-black text-white h-10 px-5 rounded-full hover:bg-gray-800 active:scale-95 transition-all shadow-lg group">
+                    <div class="cart-icon mr-2 group-hover:scale-110 transition-transform"></div>
+                    <span class="text-[10px] font-black uppercase tracking-[0.2em] mr-1">Cart</span>
+                    <span id="cart-count-badge" class="text-[10px] font-black opacity-0 transition-opacity">(0)</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Home Page -->
+        <div id="home-page" class="page-view">
+            <section class="relative h-[85vh] bg-gray-50 flex items-center px-6 overflow-hidden">
+                <div class="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-black text-white text-[10px] font-bold uppercase tracking-tighter mb-6">
+                            SALE <span class="x-mark italic">X</span> - FULL STOCK
+                        </span>
+                        <h1 class="text-6xl md:text-8xl font-black tracking-tighter mb-6 leading-[0.9]">RESTOCKED.<br>REDEFINED.</h1>
+                        <p class="text-gray-500 max-w-sm mb-10 text-lg">Inventory levels are high across all core categories. Secure your essentials while pricing remains restricted.</p>
+                        <div class="flex space-x-4">
+                            <button onclick="showPage('shop-all-page')" class="bg-black text-white px-10 py-5 font-bold uppercase tracking-widest hover:bg-gray-800 transition">Buy Now</button>
+                            <button onclick="showPage('contact-page')" class="border border-black text-black px-10 py-5 font-bold uppercase tracking-widest hover:bg-gray-100 transition">Support</button>
+                        </div>
+                    </div>
+                    <div class="hidden md:block">
+                        <img src="Images/sh.png" onclick="handleShowcaseClick()" onerror="handleImageError(this, 'Showcase')" class="w-full h-auto drop-shadow-2xl grayscale hover:grayscale-0 transition-all duration-700 cursor-pointer scale-110">
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Shop All Page -->
+        <div id="shop-all-page" class="page-view hidden px-6 py-20 max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row gap-12">
+                <aside class="w-full md:w-64 flex-shrink-0">
+                    <h2 class="text-[11px] font-bold uppercase tracking-[0.3em] mb-10 border-b pb-4">Refine Gear</h2>
+                    <div class="space-y-12">
+                        <div class="flex flex-col space-y-3">
+                            <button onclick="setFilter('All')" data-cat="All" class="filter-btn text-left text-xs uppercase font-bold tracking-widest border-l-2 border-black pl-4 text-black transition">Total Inventory</button>
+                        </div>
+                    </div>
+                </aside>
+                <div class="flex-grow">
+                    <div id="shop-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Item Details Page -->
+        <div id="item-details-page" class="page-view hidden py-24 px-6 max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
+                <div class="bg-gray-50 rounded-2xl overflow-hidden aspect-square border border-gray-100">
+                    <img id="p-image" src="" class="w-full h-full object-cover">
+                </div>
+                <div class="sticky top-32">
+                    <span id="p-cat-label" class="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-4 block"></span>
+                    <h1 id="p-name" class="text-5xl font-black tracking-tighter mb-6 uppercase"></h1>
+                    
+                    <div class="flex items-center space-x-4 mb-8">
+                        <span id="p-sale" class="text-3xl font-black text-red-600"></span>
+                        <span id="p-original" class="text-xl font-bold text-gray-300 line-through"></span>
+                    </div>
+                    
+                    <p id="p-desc" class="text-gray-500 leading-relaxed text-lg mb-12"></p>
+                    
+                    <div class="space-y-6">
+                        <button id="p-add-btn" class="w-full bg-black text-white py-6 font-bold uppercase tracking-widest hover:bg-gray-800 active:scale-[0.98] transition shadow-2xl flex items-center justify-center space-x-4">
+                            <span>Add To Cart</span>
+                            <span class="x-mark italic">X</span>
+                        </button>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-center text-gray-400">Order Limit: One item per order</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Support Page -->
+        <div id="contact-page" class="page-view hidden py-24 px-6 max-w-2xl mx-auto">
+            <h1 class="text-5xl font-black uppercase tracking-tighter mb-4">Support Hub</h1>
+            <p class="text-[10px] font-black uppercase tracking-widest text-black mb-12">Note: All sales final. No refund policy strictly enforced.</p>
+            
+            <form class="space-y-8" onsubmit="event.preventDefault(); alert('Inquiry transmitted.');">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <input type="text" placeholder="Full Name" required class="w-full border-b border-black py-4 outline-none font-medium">
+                    <input type="email" placeholder="Electronic Mail" required class="w-full border-b border-black py-4 outline-none font-medium">
+                </div>
+                <textarea placeholder="Technical Inquiry / Support Detail" rows="5" required class="w-full border-b border-black py-4 outline-none font-medium resize-none"></textarea>
+                <button class="bg-black text-white px-12 py-5 font-bold uppercase tracking-widest hover:bg-gray-800 transition">Transmit Inquiry</button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="bg-black text-white py-24 px-6 mt-24">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
+            <div class="md:col-span-2">
+                <img src="Images/logo.png" class="h-6 mb-8 invert" onerror="this.src='https://via.placeholder.com/150x40/000/fff?text=SYNAPTIX'">
+                <p class="text-gray-500 text-sm max-w-xs leading-relaxed uppercase tracking-widest font-bold">Bridging the gap between organic atmosphere and synthetic precision.</p>
+            </div>
+            <div>
+                <h4 class="text-[11px] font-black uppercase tracking-[0.4em] mb-8">Directives</h4>
+                <nav class="flex flex-col space-y-4 text-xs font-bold uppercase tracking-widest text-gray-400">
+                    <a href="#" onclick="showPage('home-page'); return false;" class="hover:text-white transition">Home</a>
+                    <a href="#" onclick="showPage('shop-all-page'); return false;" class="hover:text-white transition">Inventory</a>
+                    <a href="#" onclick="showPage('contact-page'); return false;" class="hover:text-white transition">Support</a>
+                </nav>
+            </div>
+            <div>
+                <p class="text-[10px] text-gray-600 uppercase font-bold">© 2026 Rayaan, Arif</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-overlay" class="fixed inset-0 bg-black/60 z-[60] hidden backdrop-blur-sm" onclick="toggleCart()"></div>
+    <div id="cart-sidebar" class="fixed right-0 top-0 h-full w-full sm:w-[480px] bg-white z-[70] translate-x-full transition-transform duration-500 ease-in-out flex flex-col shadow-[-20px_0_50px_rgba(0,0,0,0.1)]">
+        <div class="p-8 border-b flex justify-between items-center bg-gray-50">
+            <h2 class="text-sm font-black uppercase tracking-[0.3em]">Shopping Cart</h2>
+            <button onclick="toggleCart()" class="text-[10px] font-bold uppercase tracking-widest hover:text-red-500 transition italic">Close ×</button>
+        </div>
+        <div id="cart-content" class="flex-grow p-8 overflow-y-auto"></div>
+        <div id="cart-checkout-section" class="p-8 border-t space-y-6 bg-white hidden">
+            <div class="flex justify-between items-end">
+                <div>
+                    <span class="text-[11px] font-black uppercase tracking-widest">Total</span>
+                    <p class="text-[8px] font-bold uppercase text-black tracking-tighter mt-1">No refund policy applies</p>
+                </div>
+                <span id="cart-subtotal" class="text-3xl font-black"></span>
+            </div>
+            <div id="paypal-button-container"></div>
+        </div>
+    </div>
 </body>
 </html>
