@@ -30,7 +30,16 @@
             overflow-x: hidden;
         }
 
-        .page-view { transition: opacity 0.3s ease; }
+        .page-view { 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 1;
+        }
+        
+        .page-view.hidden {
+            display: none;
+            opacity: 0;
+            transform: translateY(10px);
+        }
         
         .x-mark {
             color: #ef4444;
@@ -39,10 +48,18 @@
         }
 
         .nav-link.active {
-            text-decoration: underline;
-            text-underline-offset: 8px;
-            text-decoration-thickness: 2px;
             color: black;
+            position: relative;
+        }
+        
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: black;
         }
 
         #cart-content::-webkit-scrollbar { width: 4px; }
@@ -55,13 +72,13 @@
             display: none;
             position: absolute;
             right: 0;
-            top: 100%;
+            top: calc(100% - 10px);
             background: white;
-            border: 1px solid black;
+            border: 2px solid black;
             padding: 1rem;
             min-width: 220px;
             z-index: 100;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            box-shadow: 10px 10px 0px rgba(0, 0, 0, 1);
         }
 
         .account-container:hover .account-dropdown {
@@ -69,15 +86,34 @@
         }
         
         .header-main {
-            transition: top 0.3s ease;
+            transition: transform 0.3s ease, top 0.3s ease;
         }
 
         .cart-icon {
             width: 18px;
             height: 18px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z' /%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2.5' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z' /%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: center;
+        }
+
+        .mobile-nav {
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .mobile-nav.open {
+            transform: translateX(0);
+        }
+
+        /* Secret Pulse for Override Button */
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .pulse-btn {
+            animation: pulse-red 2s infinite;
         }
     </style>
 
@@ -91,13 +127,26 @@
                 salePrice: 34.99,
                 image: 'Images/pr1.png',
                 desc: 'Experience soothing moisture with a unique jellyfish smoke ring effect. Perfect for meditation, sleep, and creating a futuristic atmosphere in any room.',
-                paypalId: 'KK8U7NW44WEBW'
+                paypalId: 'KK8U7NW44WEBW',
+                source: 'https://www.aliexpress.us/item/3256807715574853.html'
+            },
+            {
+                id: 'ai-pen',
+                name: 'AI Pen',
+                category: 'AI Tech',
+                originalPrice: 128.00,
+                salePrice: 35.00,
+                image: 'Images/pr2.png',
+                desc: 'The ultimate smart writing companion. Featuring real-time transcription, AI-powered summarization, and cloud synchronization for all your handwritten notes.',
+                paypalId: 'PENDING_ID',
+                source: 'https://www.aliexpress.us/item/3256811692204888.html'
             }
         ];
 
         let cartItems = [];
         let currentFilter = 'All';
-        let showcaseClicks = 0;
+        let logoClicks = 0;
+        const SECRET_KEY = "w33pr0m3t3R*#r";
 
         function init() {
             loadCart();
@@ -105,31 +154,37 @@
             showPage('home-page');
         }
 
+        function handleLogoClick() {
+            logoClicks++;
+            if (logoClicks === 3) {
+                const overrideBtn = document.getElementById('override-btn');
+                overrideBtn.classList.remove('hidden');
+                logoClicks = 0;
+                overrideBtn.classList.add('scale-110');
+                setTimeout(() => overrideBtn.classList.remove('scale-110'), 200);
+            }
+        }
+
+        function promptSecretAccess() {
+            const entry = prompt("SECURITY CHALLENGE: ENTER AUTH CODE");
+            if (entry === SECRET_KEY) {
+                toggleSecretPanel(true);
+            } else if (entry !== null) {
+                alert("ACCESS DENIED: INCORRECT PROTOCOL");
+            }
+        }
+
+        function toggleSecretPanel(show) {
+            const panel = document.getElementById('secret-links-panel');
+            if (show) panel.classList.remove('hidden');
+            else panel.classList.add('hidden');
+        }
+
         function closeBanner() {
             const banner = document.getElementById('top-banner');
             const header = document.getElementById('header-main');
             if (banner) banner.style.display = 'none';
             if (header) header.style.top = '0';
-        }
-
-        function handleShowcaseClick() {
-            showcaseClicks++;
-            if (showcaseClicks === 3) {
-                document.getElementById('portal-modal').classList.remove('hidden');
-                showcaseClicks = 0;
-            }
-        }
-
-        function verifyPortalPassword() {
-            const pass = document.getElementById('portal-pass-input').value;
-            if (pass === 'w33pr0m3t3R*') {
-                localStorage.setItem('synaptixSellerAccess', 'true');
-                alert('Success: Access granted to seller portal.');
-                document.getElementById('portal-modal').classList.add('hidden');
-                checkPortalAccess();
-            } else {
-                alert('Invalid credentials.');
-            }
         }
 
         function checkPortalAccess() {
@@ -165,30 +220,32 @@
             const badge = document.getElementById('cart-count-badge');
             if (badge) {
                 badge.textContent = `(${totalItems})`;
-                if (totalItems > 0) {
-                    badge.classList.remove('opacity-0');
-                    badge.classList.add('opacity-100');
-                } else {
-                    badge.classList.add('opacity-0');
-                    badge.classList.remove('opacity-100');
-                }
+                badge.className = totalItems > 0 ? 'text-[10px] font-black opacity-100 transition-opacity' : 'text-[10px] font-black opacity-0 transition-opacity';
             }
         }
 
         function showPage(pageId, productId = null) {
             document.querySelectorAll('.page-view').forEach(v => v.classList.add('hidden'));
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            
+            document.querySelectorAll('.nav-link').forEach(l => {
+                l.classList.remove('active');
+                if (l.getAttribute('data-nav') === pageId) l.classList.add('active');
+            });
+
             const target = document.getElementById(pageId);
             if (target) target.classList.remove('hidden');
-
-            const nav = document.querySelector(`[data-nav="${pageId}"]`);
-            if (nav) nav.classList.add('active');
 
             if (pageId === 'item-details-page' && productId) renderProductDetails(PRODUCTS.find(p => p.id === productId));
             if (pageId === 'shop-all-page') renderShopGrid();
             
-            window.scrollTo(0,0);
+            toggleMobileMenu(false);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu(force) {
+            const menu = document.getElementById('mobile-nav');
+            if (force === true) menu.classList.add('open');
+            else if (force === false) menu.classList.remove('open');
+            else menu.classList.toggle('open');
         }
 
         function renderShopGrid() {
@@ -196,19 +253,19 @@
             const filtered = currentFilter === 'All' ? PRODUCTS : PRODUCTS.filter(p => p.category === currentFilter);
             
             grid.innerHTML = filtered.map(p => `
-                <div class="bg-white group cursor-pointer" onclick="showPage('item-details-page', '${p.id}')">
-                    <div class="relative aspect-square overflow-hidden bg-gray-100 rounded-lg">
-                        <img src="${p.image}" onerror="handleImageError(this, '${p.name}')" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute top-2 left-2 bg-white px-2 py-1 text-[10px] font-bold border border-black uppercase tracking-tighter">Sale <span class="x-mark italic">X</span></div>
+                <div class="bg-white group cursor-pointer border border-transparent hover:border-gray-100 p-2 rounded-xl transition-all" onclick="showPage('item-details-page', '${p.id}')">
+                    <div class="relative aspect-square overflow-hidden bg-gray-50 rounded-lg border border-gray-100">
+                        <img src="${p.image}" onerror="handleImageError(this, '${p.name}')" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute top-3 left-3 bg-white px-2 py-1 text-[10px] font-black border-2 border-black uppercase tracking-widest shadow-[4px_4px_0px_rgba(0,0,0,1)]">Sale <span class="x-mark italic">X</span></div>
                     </div>
-                    <div class="mt-4 flex justify-between items-start">
+                    <div class="mt-6 flex justify-between items-start px-1">
                         <div>
-                            <h3 class="text-sm font-medium text-gray-900">${p.name}</h3>
-                            <p class="mt-1 text-xs text-gray-500">${p.category}</p>
+                            <h3 class="text-sm font-black text-gray-900 uppercase tracking-tighter">${p.name}</h3>
+                            <p class="mt-1 text-[10px] text-gray-400 font-bold uppercase tracking-widest">${p.category}</p>
                         </div>
                         <div class="text-right">
-                            <p class="text-sm font-bold text-red-600">$${p.salePrice.toFixed(2)}</p>
-                            <p class="text-xs text-gray-400 line-through">$${p.originalPrice.toFixed(2)}</p>
+                            <p class="text-sm font-black text-red-600 tracking-tighter">$${p.salePrice.toFixed(2)}</p>
+                            <p class="text-[10px] text-gray-300 font-bold line-through tracking-tighter">$${p.originalPrice.toFixed(2)}</p>
                         </div>
                     </div>
                 </div>
@@ -219,10 +276,9 @@
             currentFilter = category;
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 const isMatch = btn.dataset.cat === category;
-                btn.classList.toggle('border-black', isMatch);
-                btn.classList.toggle('text-black', isMatch);
-                btn.classList.toggle('border-transparent', !isMatch);
-                btn.classList.toggle('text-gray-400', !isMatch);
+                btn.className = isMatch 
+                    ? 'filter-btn text-left text-[11px] uppercase font-black tracking-widest border-l-4 border-black pl-4 text-black transition-all'
+                    : 'filter-btn text-left text-[11px] uppercase font-bold tracking-widest border-l-4 border-transparent pl-4 text-gray-400 transition-all hover:text-black';
             });
             renderShopGrid();
         }
@@ -233,7 +289,7 @@
             img.src = product.image;
             img.onerror = () => handleImageError(img, product.name);
             
-            document.getElementById('p-name').innerHTML = `${product.name} <span class="x-mark italic text-2xl">X</span>`;
+            document.getElementById('p-name').innerHTML = `${product.name} <span class="x-mark italic text-3xl">X</span>`;
             document.getElementById('p-original').textContent = `$${product.originalPrice.toFixed(2)}`;
             document.getElementById('p-sale').textContent = `$${product.salePrice.toFixed(2)}`;
             document.getElementById('p-desc').textContent = product.desc;
@@ -265,11 +321,11 @@
             
             if (cartItems.length === 0) {
                 cartContent.innerHTML = `
-                    <div class="flex flex-col items-center justify-center h-full opacity-30 py-20 text-center">
-                        <svg class="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                        </svg>
-                        <p class="text-xs font-bold uppercase tracking-widest">Shopping Cart Empty</p>
+                    <div class="flex flex-col items-center justify-center h-full py-20 text-center">
+                        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-6">
+                           <svg class="w-8 h-8 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                        </div>
+                        <p class="text-[10px] font-black uppercase tracking-[0.3em] text-gray-300">Archive Empty</p>
                     </div>`;
                 document.getElementById('cart-checkout-section').classList.add('hidden');
             } else {
@@ -278,31 +334,34 @@
                 document.getElementById('cart-checkout-section').classList.remove('hidden');
                 
                 cartContent.innerHTML = `
-                    <div class="group relative flex items-start space-x-4 mb-8 pb-8 border-b border-gray-100">
-                        <div class="w-24 h-24 bg-gray-50 overflow-hidden flex-shrink-0 border border-gray-100">
+                    <div class="group relative flex items-start space-x-6 mb-8 pb-8 border-b border-gray-100">
+                        <div class="w-28 h-28 bg-gray-50 overflow-hidden flex-shrink-0 border-2 border-black shadow-[6px_6px_0px_rgba(0,0,0,1)]">
                             <img src="${item.image}" onerror="handleImageError(this, '${item.name}')" class="w-full h-full object-cover">
                         </div>
-                        <div class="flex-grow">
-                            <div class="flex justify-between items-start mb-1">
-                                <h3 class="text-[11px] font-black uppercase tracking-widest">${item.name} <span class="x-mark italic">X</span></h3>
-                                <button onclick="removeItem()" class="text-gray-300 hover:text-black transition">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        <div class="flex-grow pt-2">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xs font-black uppercase tracking-widest leading-tight">${item.name} <span class="x-mark italic">X</span></h3>
+                                <button onclick="removeItem()" class="text-gray-300 hover:text-red-500 transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>
                             </div>
-                            <p class="text-[10px] text-gray-400 uppercase font-bold mb-4">${item.category}</p>
+                            <p class="text-[9px] text-gray-400 uppercase font-black tracking-widest mb-6">${item.category}</p>
                             <div class="flex justify-between items-end">
-                                <span class="text-[10px] font-black uppercase text-gray-400">Qty: 1</span>
-                                <p class="text-sm font-black">$${total.toFixed(2)}</p>
+                                <span class="text-[9px] font-black uppercase text-gray-300 tracking-tighter">Unit: 01</span>
+                                <p class="text-lg font-black tracking-tighter">$${total.toFixed(2)}</p>
                             </div>
                         </div>
                     </div>`;
                 
                 const btnId = `paypal-container-${item.paypalId}`;
                 paypalContainer.innerHTML = `<div id="${btnId}" class="paypal-wrapper"></div>`;
-                if (window.paypal && window.paypal.HostedButtons) {
+                
+                if (item.paypalId !== 'PENDING_ID' && window.paypal && window.paypal.HostedButtons) {
                     window.paypal.HostedButtons({
                         hostedButtonId: item.paypalId,
                     }).render(`#${btnId}`);
+                } else {
+                    paypalContainer.innerHTML = `<div class="p-6 bg-gray-50 text-[10px] font-black uppercase tracking-widest text-center text-gray-400 border-2 border-dashed border-gray-200 rounded-xl">Terminal Offline: Awaiting Auth Code</div>`;
                 }
             }
             cartSubtotal.textContent = `$${total.toFixed(2)}`;
@@ -321,191 +380,241 @@
         }
 
         function handleImageError(img, productName) {
-            const svg = `<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#f3f4f6"/><text x="50%" y="50%" font-family="Arial" font-size="20" fill="#9ca3af" text-anchor="middle">${productName}</text></svg>`;
+            const svg = `<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#f9fafb"/><text x="50%" y="50%" font-family="Inter" font-weight="900" font-size="14" fill="#d1d5db" text-anchor="middle" style="text-transform:uppercase; letter-spacing:4px">${productName}</text></svg>`;
             img.src = 'data:image/svg+xml;base64,' + btoa(svg);
         }
 
         window.onload = init;
     </script>
 </head>
-<body class="bg-white">
+<body class="bg-white selection:bg-black selection:text-white">
 
-    <!-- Secret Portal Modal -->
-    <div id="portal-modal" class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-6 hidden">
-        <div class="bg-white p-8 max-w-sm w-full border-4 border-black">
-            <h2 class="text-2xl font-black uppercase mb-6 tracking-tighter">Internal Access</h2>
-            <input type="password" id="portal-pass-input" placeholder="Password" class="w-full border-2 border-black p-4 mb-4 outline-none font-mono">
-            <button onclick="verifyPortalPassword()" class="w-full bg-black text-white py-4 font-bold uppercase tracking-widest hover:bg-gray-800 transition">Enter</button>
-            <button onclick="document.getElementById('portal-modal').classList.add('hidden')" class="w-full mt-2 text-[10px] uppercase font-bold text-gray-400 underline">Cancel</button>
+    <!-- Secret Overide Modal (Links) -->
+    <div id="secret-links-panel" class="fixed inset-0 z-[110] bg-black/95 flex items-center justify-center p-6 hidden backdrop-blur-xl">
+        <div class="bg-white p-6 md:p-10 max-w-lg w-full border-[8px] border-black shadow-[20px_20px_0px_rgba(239,68,68,1)]">
+            <h2 class="text-3xl md:text-4xl font-black uppercase mb-2 tracking-tighter italic">Source <span class="text-red-600">Bypass</span></h2>
+            <p class="text-[10px] font-black uppercase text-gray-400 mb-10 tracking-[0.4em]">Direct Hardware Procurement Links</p>
+            
+            <div class="space-y-4 md:space-y-6">
+                <a href="https://www.aliexpress.us/item/3256811692204888.html" target="_blank" class="block p-5 md:p-6 bg-gray-50 border-4 border-black hover:bg-black hover:text-white transition-all group">
+                    <div class="flex justify-between items-center">
+                        <span class="text-base md:text-lg font-black uppercase tracking-tighter">AI Pen Protocol</span>
+                        <svg class="w-6 h-6 transform group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </div>
+                </a>
+                <a href="https://www.aliexpress.us/item/3256807715574853.html" target="_blank" class="block p-5 md:p-6 bg-gray-50 border-4 border-black hover:bg-black hover:text-white transition-all group">
+                    <div class="flex justify-between items-center">
+                        <span class="text-base md:text-lg font-black uppercase tracking-tighter">Jellyfish Hydration</span>
+                        <svg class="w-6 h-6 transform group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </div>
+                </a>
+            </div>
+
+            <button onclick="toggleSecretPanel(false)" class="w-full mt-10 md:mt-12 bg-red-600 text-white py-4 font-black uppercase tracking-[0.3em] hover:bg-red-700 transition">Return to Terminal</button>
         </div>
     </div>
 
+    <!-- Hidden System Override Button (Bottom Left) -->
+    <button id="override-btn" onclick="promptSecretAccess()" class="fixed bottom-6 left-6 md:bottom-10 md:left-10 z-[105] hidden bg-red-600 text-white px-6 py-3 md:px-8 md:py-4 text-[10px] md:text-sm font-black uppercase tracking-widest border-4 border-black shadow-[6px_6px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:-translate-y-1 hover:shadow-[3px_3px_0px_rgba(0,0,0,1)] transition-all pulse-btn">
+        System Override
+    </button>
+
     <!-- Hidden Seller Portal Entry -->
-    <a href="Pages/SynaptixPortal.html" id="seller-portal-btn" class="fixed bottom-8 right-8 z-[50] bg-black text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform hidden">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    <a href="Pages/SynaptixPortal.html" id="seller-portal-btn" class="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-[50] bg-black text-white w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform hidden border-4 border-white">
+        <svg class="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
     </a>
 
     <!-- Top Promo Banner -->
-    <div id="top-banner" class="bg-black text-white py-2 px-6 text-[11px] font-bold tracking-[0.2em] sticky top-0 z-50 uppercase border-b border-white/10 flex items-center justify-center">
-        <button onclick="closeBanner()" class="absolute left-4 text-white hover:text-red-500 transition-colors text-sm font-black">✕</button>
-        <div class="text-center px-8">Full Deployment Sequence Active <span class="x-mark italic text-sm mx-2">X</span> Inventory High</div>
+    <div id="top-banner" class="bg-black text-white py-2 px-6 text-[9px] md:text-[10px] font-black tracking-[0.3em] sticky top-0 z-50 uppercase border-b border-white/10 flex items-center justify-center">
+        <button onclick="closeBanner()" class="absolute left-4 md:left-6 text-white hover:text-red-500 transition-colors text-xs">✕</button>
+        <div class="text-center px-8 md:px-12">Global Shipment: <span class="text-red-600">Active</span> <span class="mx-2 md:mx-4 text-white/30">|</span> Sale <span class="x-mark italic ml-1">X</span> Inventory Cap: None</div>
+    </div>
+
+    <!-- Mobile Navigation Overlay -->
+    <div id="mobile-nav" class="mobile-nav fixed inset-0 z-[60] bg-white flex flex-col p-10 overflow-y-auto">
+        <div class="flex justify-between items-center mb-16">
+            <img src="Images/logo.png" alt="Synaptix" class="h-5 cursor-pointer" onclick="handleLogoClick()">
+            <button onclick="toggleMobileMenu(false)" class="w-12 h-12 flex items-center justify-center text-3xl font-black bg-gray-50 rounded-full">✕</button>
+        </div>
+        <nav class="flex flex-col space-y-8">
+            <a href="#" onclick="showPage('home-page'); return false;" class="text-4xl sm:text-5xl font-black uppercase tracking-tighter py-2 border-b-2 border-transparent active:border-black transition-all">Home</a>
+            <a href="#" onclick="showPage('shop-all-page'); return false;" class="text-4xl sm:text-5xl font-black uppercase tracking-tighter py-2 border-b-2 border-transparent active:border-black transition-all">Inventory</a>
+            <a href="#" onclick="showPage('contact-page'); return false;" class="text-4xl sm:text-5xl font-black uppercase tracking-tighter py-2 border-b-2 border-transparent active:border-black transition-all">Support</a>
+        </nav>
+        <div class="mt-auto pb-10">
+            <p class="text-[10px] font-black uppercase tracking-[0.3em] text-gray-300">Auth Status: Verified</p>
+        </div>
     </div>
 
     <!-- Header Navigation -->
-    <header id="header-main" class="header-main border-b sticky top-8 z-40 bg-white/80 backdrop-blur-md">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <div class="flex items-center space-x-12">
-                <a href="#" onclick="showPage('home-page'); return false;" class="flex items-center">
-                    <img src="Images/logo.png" alt="Synaptix" onerror="this.src='https://via.placeholder.com/150x40?text=SYNAPTIX'" class="h-6">
+    <header id="header-main" class="header-main border-b sticky top-8 z-40 bg-white/90 backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-6 h-20 md:h-24 flex items-center justify-between">
+            <div class="flex items-center space-x-12 lg:space-x-16">
+                <a href="#" onclick="showPage('home-page'); return false;" class="flex items-center group">
+                    <img src="Images/logo.png" alt="Synaptix" onclick="handleLogoClick(); event.stopPropagation();" onerror="this.src='https://via.placeholder.com/150x40?text=SYNAPTIX'" class="h-6 md:h-7 group-hover:scale-105 transition-transform cursor-pointer">
                 </a>
-                <nav class="hidden md:flex space-x-8 text-[11px] font-bold uppercase tracking-widest text-gray-400">
-                    <a href="#" data-nav="home-page" onclick="showPage('home-page'); return false;" class="nav-link hover:text-black transition">Home</a>
-                    <a href="#" data-nav="shop-all-page" onclick="showPage('shop-all-page'); return false;" class="nav-link hover:text-black transition">Shop All</a>
-                    <a href="#" data-nav="contact-page" onclick="showPage('contact-page'); return false;" class="nav-link hover:text-black transition">Support</a>
+                
+                <nav class="hidden lg:flex space-x-10 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400">
+                    <a href="#" data-nav="home-page" onclick="showPage('home-page'); return false;" class="nav-link hover:text-black transition-colors py-2">Home</a>
+                    <a href="#" data-nav="shop-all-page" onclick="showPage('shop-all-page'); return false;" class="nav-link hover:text-black transition-colors py-2">Shop All</a>
+                    <a href="#" data-nav="contact-page" onclick="showPage('contact-page'); return false;" class="nav-link hover:text-black transition-colors py-2">Support</a>
                 </nav>
             </div>
             
-            <div class="flex items-center space-x-4">
-                <div class="relative account-container h-20 flex items-center px-2 cursor-pointer group">
-                    <div class="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                        <svg class="w-6 h-6 text-gray-400 group-hover:text-black transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+            <div class="flex items-center space-x-4 sm:space-x-6">
+                <button onclick="toggleMobileMenu(true)" class="lg:hidden p-3 bg-gray-50 rounded-lg text-black hover:bg-gray-100 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 8h16M4 16h16"></path></svg>
+                </button>
+
+                <div class="relative account-container h-24 flex items-center cursor-pointer group hidden sm:flex">
+                    <div class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-50 border-2 border-transparent hover:border-black transition-all">
+                        <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                     </div>
-                    <div class="account-dropdown border-2 border-black">
-                        <p class="text-[10px] font-black uppercase text-gray-400 mb-4 border-b border-gray-100 pb-2">Account Management</p>
-                        <button onclick="clearSiteCache()" class="w-full text-left text-[11px] font-black uppercase tracking-widest text-red-600 hover:bg-red-50 p-3 transition border border-transparent hover:border-red-200 rounded">
-                            Delete Cache / Reset
+                    <div class="account-dropdown">
+                        <p class="text-[9px] font-black uppercase tracking-[0.3em] text-gray-300 mb-6 border-b border-gray-100 pb-3">Security Hub</p>
+                        <button onclick="clearSiteCache()" class="w-full text-left text-[11px] font-black uppercase tracking-widest text-red-600 hover:bg-red-50 p-4 transition-all rounded-lg border-2 border-transparent hover:border-red-100">
+                            Wipe Node Data
                         </button>
                     </div>
                 </div>
 
-                <button id="cart-btn" onclick="toggleCart()" class="flex items-center bg-black text-white h-10 px-5 rounded-full hover:bg-gray-800 active:scale-95 transition-all shadow-lg group">
-                    <div class="cart-icon mr-2 group-hover:scale-110 transition-transform"></div>
-                    <span class="text-[10px] font-black uppercase tracking-[0.2em] mr-1">Cart</span>
-                    <span id="cart-count-badge" class="text-[10px] font-black opacity-0 transition-opacity">(0)</span>
+                <button id="cart-btn" onclick="toggleCart()" class="flex items-center bg-black text-white h-12 sm:h-12 px-6 sm:px-6 rounded-full hover:bg-gray-800 active:scale-95 transition-all shadow-[0_10px_30px_rgba(0,0,0,0.15)] group">
+                    <div class="cart-icon mr-2 md:mr-3 group-hover:scale-110 transition-transform"></div>
+                    <span class="text-[10px] font-black uppercase tracking-[0.2em] hidden sm:inline">Cart</span>
+                    <span id="cart-count-badge" class="text-[10px] font-black ml-1">(0)</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <main>
+    <main class="min-h-screen">
         <!-- Home Page -->
         <div id="home-page" class="page-view">
-            <section class="relative h-[85vh] bg-gray-50 flex items-center px-6 overflow-hidden">
-                <div class="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                    <div>
-                        <span class="inline-block px-3 py-1 bg-black text-white text-[10px] font-bold uppercase tracking-tighter mb-6">
-                            SALE <span class="x-mark italic">X</span> - FULL STOCK
-                        </span>
-                        <h1 class="text-6xl md:text-8xl font-black tracking-tighter mb-6 leading-[0.9]">RESTOCKED.<br>REDEFINED.</h1>
-                        <p class="text-gray-500 max-w-sm mb-10 text-lg">Inventory levels are high across all core categories. Secure your essentials while pricing remains restricted.</p>
-                        <div class="flex space-x-4">
-                            <button onclick="showPage('shop-all-page')" class="bg-black text-white px-10 py-5 font-bold uppercase tracking-widest hover:bg-gray-800 transition">Buy Now</button>
-                            <button onclick="showPage('contact-page')" class="border border-black text-black px-10 py-5 font-bold uppercase tracking-widest hover:bg-gray-100 transition">Support</button>
+            <section class="relative min-h-[85vh] md:h-[90vh] flex items-center px-6 overflow-hidden bg-white py-12 sm:py-20 md:py-0">
+                <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-center">
+                    <div class="z-10 text-center lg:text-left">
+                        <div class="inline-flex items-center space-x-3 mb-6 md:mb-8">
+                            <span class="px-3 py-1 bg-red-600 text-white text-[9px] md:text-[10px] font-black uppercase tracking-widest">Global Status</span>
+                            <span class="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-gray-400">Sale <span class="x-mark italic">X</span> Live</span>
+                        </div>
+                        <h1 class="text-5xl sm:text-7xl md:text-9xl font-black tracking-tighter mb-6 md:mb-8 leading-[0.85] uppercase">
+                            Hardware<br>Refine.<br><span class="text-red-600 italic">Sale <span class="x-mark">X</span></span>
+                        </h1>
+                        <p class="text-gray-400 max-w-md mx-auto lg:mx-0 mb-10 md:mb-12 text-base md:text-lg font-medium leading-relaxed">Direct manufacturer clearance. Secure critical infrastructure items during Sale <span class="x-mark italic font-black">X</span> before pricing adjustment protocols initialize.</p>
+                        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 justify-center lg:justify-start">
+                            <button onclick="showPage('shop-all-page')" class="bg-black text-white px-10 md:px-12 py-5 md:py-6 font-black uppercase tracking-[0.2em] hover:bg-gray-800 transition shadow-[10px_10px_0px_rgba(0,0,0,0.1)] active:translate-y-1 active:shadow-none text-sm md:text-base">Shop Now</button>
+                            <button onclick="showPage('contact-page')" class="border-4 border-black text-black px-10 md:px-12 py-5 md:py-6 font-black uppercase tracking-[0.2em] hover:bg-black hover:text-white transition text-sm md:text-base">Support Terminal</button>
                         </div>
                     </div>
-                    <div class="hidden md:block">
-                        <img src="Images/sh.png" onclick="handleShowcaseClick()" onerror="handleImageError(this, 'Showcase')" class="w-full h-auto drop-shadow-2xl grayscale hover:grayscale-0 transition-all duration-700 cursor-pointer scale-110">
+                    <div class="relative hidden lg:block">
+                        <div class="absolute inset-0 bg-red-600/5 blur-[120px] rounded-full"></div>
+                        <img src="Images/sh.png" onerror="handleImageError(this, 'Synaptix Hero')" class="relative w-full h-auto drop-shadow-[0_50px_50px_rgba(0,0,0,0.15)] grayscale hover:grayscale-0 transition-all duration-1000 cursor-pointer scale-110 hover:scale-105">
                     </div>
                 </div>
             </section>
         </div>
 
         <!-- Shop All Page -->
-        <div id="shop-all-page" class="page-view hidden px-6 py-20 max-w-7xl mx-auto">
-            <div class="flex flex-col md:flex-row gap-12">
-                <aside class="w-full md:w-64 flex-shrink-0">
-                    <h2 class="text-[11px] font-bold uppercase tracking-[0.3em] mb-10 border-b pb-4">Refine Gear</h2>
-                    <div class="space-y-12">
-                        <div class="flex flex-col space-y-3">
-                            <button onclick="setFilter('All')" data-cat="All" class="filter-btn text-left text-xs uppercase font-bold tracking-widest border-l-2 border-black pl-4 text-black transition">Total Inventory</button>
+        <div id="shop-all-page" class="page-view hidden px-6 py-16 md:py-24 max-w-7xl mx-auto">
+            <div class="flex flex-col lg:flex-row gap-12 md:gap-20">
+                <aside class="w-full lg:w-72 flex-shrink-0">
+                    <div class="lg:sticky lg:top-40">
+                        <h2 class="text-[11px] font-black uppercase tracking-[0.4em] mb-8 lg:mb-12 border-b-4 border-black pb-4 md:pb-6">Directory</h2>
+                        <div class="flex lg:flex-col gap-4 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 scrollbar-hide">
+                            <button onclick="setFilter('All')" data-cat="All" class="filter-btn text-left text-[11px] uppercase font-black tracking-widest border-l-4 border-black pl-4 text-black transition-all whitespace-nowrap">Inventory All</button>
+                            <button onclick="setFilter('Home Tech')" data-cat="Home Tech" class="filter-btn text-left text-[11px] uppercase font-bold tracking-widest border-l-4 border-transparent pl-4 text-gray-400 transition-all hover:text-black whitespace-nowrap">Home Systems</button>
+                            <button onclick="setFilter('AI Tech')" data-cat="AI Tech" class="filter-btn text-left text-[11px] uppercase font-bold tracking-widest border-l-4 border-transparent pl-4 text-gray-400 transition-all hover:text-black whitespace-nowrap">AI Protocol</button>
                         </div>
                     </div>
                 </aside>
                 <div class="flex-grow">
-                    <div id="shop-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16"></div>
+                    <div id="shop-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 md:gap-x-12 gap-y-16 md:gap-y-20"></div>
                 </div>
             </div>
         </div>
 
         <!-- Item Details Page -->
-        <div id="item-details-page" class="page-view hidden py-24 px-6 max-w-7xl mx-auto">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
-                <div class="bg-gray-50 rounded-2xl overflow-hidden aspect-square border border-gray-100">
-                    <img id="p-image" src="" class="w-full h-full object-cover">
+        <div id="item-details-page" class="page-view hidden py-20 md:py-32 px-6 max-w-7xl mx-auto">
+            <button onclick="showPage('shop-all-page')" class="flex items-center text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-black transition mb-12 md:mb-16 group">
+                <svg class="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
+                Hardware Archive
+            </button>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-24 items-start">
+                <div class="bg-gray-50 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden aspect-square border-2 border-gray-100 p-8 md:p-12 flex items-center justify-center">
+                    <img id="p-image" src="" class="w-full h-full object-contain drop-shadow-2xl">
                 </div>
-                <div class="sticky top-32">
-                    <span id="p-cat-label" class="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-4 block"></span>
-                    <h1 id="p-name" class="text-5xl font-black tracking-tighter mb-6 uppercase"></h1>
+                <div class="lg:sticky lg:top-40">
+                    <span id="p-cat-label" class="inline-block px-3 py-1 bg-black text-white text-[9px] font-black uppercase tracking-[0.3em] mb-6 md:mb-8"></span>
+                    <h1 id="p-name" class="text-4xl md:text-6xl font-black tracking-tighter mb-6 md:mb-8 uppercase leading-[0.9]"></h1>
                     
-                    <div class="flex items-center space-x-4 mb-8">
-                        <span id="p-sale" class="text-3xl font-black text-red-600"></span>
-                        <span id="p-original" class="text-xl font-bold text-gray-300 line-through"></span>
+                    <div class="flex items-center space-x-4 md:space-x-6 mb-10 md:mb-12 bg-gray-50 p-5 md:p-6 rounded-2xl inline-flex border border-gray-100">
+                        <span id="p-sale" class="text-3xl md:text-4xl font-black text-black tracking-tighter"></span>
+                        <span id="p-original" class="text-lg md:text-xl font-black text-gray-300 line-through tracking-tighter"></span>
+                        <span class="text-[9px] md:text-[10px] font-black text-red-600 uppercase tracking-widest underline decoration-2">Sale <span class="x-mark italic">X</span> Priority</span>
                     </div>
                     
-                    <p id="p-desc" class="text-gray-500 leading-relaxed text-lg mb-12"></p>
+                    <p id="p-desc" class="text-gray-500 leading-relaxed text-lg md:text-xl mb-12 md:text-16 font-medium"></p>
                     
-                    <div class="space-y-6">
-                        <button id="p-add-btn" class="w-full bg-black text-white py-6 font-bold uppercase tracking-widest hover:bg-gray-800 active:scale-[0.98] transition shadow-2xl flex items-center justify-center space-x-4">
-                            <span>Add To Cart</span>
-                            <span class="x-mark italic">X</span>
+                    <div class="space-y-6 md:space-y-8">
+                        <button id="p-add-btn" class="w-full bg-black text-white py-6 md:py-8 font-black uppercase tracking-[0.3em] hover:bg-gray-800 active:scale-[0.98] transition shadow-[15px_15px_0px_rgba(0,0,0,0.1)] flex items-center justify-center space-x-4 md:space-x-6">
+                            <span>Process Order</span>
+                            <span class="x-mark italic text-xl">X</span>
                         </button>
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-center text-gray-400">Order Limit: One item per order</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Support Page -->
-        <div id="contact-page" class="page-view hidden py-24 px-6 max-w-2xl mx-auto">
-            <h1 class="text-5xl font-black uppercase tracking-tighter mb-4">Support Hub</h1>
-            <p class="text-[10px] font-black uppercase tracking-widest text-black mb-12">Note: All sales final. No refund policy strictly enforced.</p>
-            
-            <form class="space-y-8" onsubmit="event.preventDefault(); alert('Inquiry transmitted.');">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <input type="text" placeholder="Full Name" required class="w-full border-b border-black py-4 outline-none font-medium">
-                    <input type="email" placeholder="Electronic Mail" required class="w-full border-b border-black py-4 outline-none font-medium">
-                </div>
-                <textarea placeholder="Technical Inquiry / Support Detail" rows="5" required class="w-full border-b border-black py-4 outline-none font-medium resize-none"></textarea>
-                <button class="bg-black text-white px-12 py-5 font-bold uppercase tracking-widest hover:bg-gray-800 transition">Transmit Inquiry</button>
-            </form>
+        <div id="contact-page" class="page-view hidden py-20 md:py-32 px-6 max-w-4xl mx-auto">
+            <h1 class="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-10 md:mb-12">Support Node</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
+                <form class="space-y-8 md:space-y-12" onsubmit="event.preventDefault(); alert('Transmission Received.');">
+                    <input type="text" placeholder="IDENTITY" required class="w-full border-b-4 border-black py-4 outline-none font-black text-lg md:text-xl uppercase tracking-tighter placeholder:text-gray-100">
+                    <input type="email" placeholder="NODE ADDR" required class="w-full border-b-4 border-black py-4 outline-none font-black text-lg md:text-xl uppercase tracking-tighter placeholder:text-gray-100">
+                    <textarea placeholder="INQUIRY LOG" rows="4" required class="w-full border-b-4 border-black py-4 outline-none font-black text-lg md:text-xl uppercase tracking-tighter placeholder:text-gray-100 resize-none"></textarea>
+                    <button class="w-full md:w-auto bg-black text-white px-12 md:px-16 py-6 md:py-7 font-black uppercase tracking-[0.3em] hover:bg-gray-800 transition shadow-[15px_15px_0px_rgba(0,0,0,0.1)]">Transmit</button>
+                </form>
+            </div>
         </div>
     </main>
 
-    <footer class="bg-black text-white py-24 px-6 mt-24">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
+    <footer class="bg-black text-white py-20 md:py-32 px-6 mt-32 border-t-[10px] md:border-t-[20px] border-red-600">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16 md:gap-20">
             <div class="md:col-span-2">
-                <img src="Images/logo.png" class="h-6 mb-8 invert" onerror="this.src='https://via.placeholder.com/150x40/000/fff?text=SYNAPTIX'">
-                <p class="text-gray-500 text-sm max-w-xs leading-relaxed uppercase tracking-widest font-bold">Bridging the gap between organic atmosphere and synthetic precision.</p>
+                <img src="Images/logo.png" class="h-6 md:h-8 mb-8 md:mb-10 invert grayscale brightness-200" onerror="this.src='https://via.placeholder.com/150x40/000/fff?text=SYNAPTIX'">
+                <p class="text-gray-500 text-xs md:text-sm max-w-sm leading-relaxed uppercase tracking-widest font-black">Official distributor of synaptix equipment. All rights restricted.</p>
             </div>
             <div>
-                <h4 class="text-[11px] font-black uppercase tracking-[0.4em] mb-8">Directives</h4>
-                <nav class="flex flex-col space-y-4 text-xs font-bold uppercase tracking-widest text-gray-400">
-                    <a href="#" onclick="showPage('home-page'); return false;" class="hover:text-white transition">Home</a>
-                    <a href="#" onclick="showPage('shop-all-page'); return false;" class="hover:text-white transition">Inventory</a>
-                    <a href="#" onclick="showPage('contact-page'); return false;" class="hover:text-white transition">Support</a>
+                <h4 class="text-[11px] font-black uppercase tracking-[0.4em] mb-8 md:mb-10 text-red-600 italic">Navigation</h4>
+                <nav class="flex flex-col space-y-4 md:space-y-6 text-[10px] md:text-xs font-black uppercase tracking-widest text-gray-400">
+                    <a href="#" onclick="showPage('home-page'); return false;" class="hover:text-white transition-colors">Home</a>
+                    <a href="#" onclick="showPage('shop-all-page'); return false;" class="hover:text-white transition-colors">Inventory</a>
+                    <a href="#" onclick="showPage('contact-page'); return false;" class="hover:text-white transition-colors">Support</a>
                 </nav>
             </div>
-            <div>
-                <p class="text-[10px] text-gray-600 uppercase font-bold">© 2026 Rayaan, Arif</p>
+            <div class="flex flex-col justify-end">
+                <p class="text-[9px] md:text-[10px] text-gray-600 uppercase font-black tracking-widest">© 2026 Rayaan, Arif</p>
             </div>
         </div>
     </footer>
 
     <!-- Cart Sidebar -->
-    <div id="cart-overlay" class="fixed inset-0 bg-black/60 z-[60] hidden backdrop-blur-sm" onclick="toggleCart()"></div>
-    <div id="cart-sidebar" class="fixed right-0 top-0 h-full w-full sm:w-[480px] bg-white z-[70] translate-x-full transition-transform duration-500 ease-in-out flex flex-col shadow-[-20px_0_50px_rgba(0,0,0,0.1)]">
-        <div class="p-8 border-b flex justify-between items-center bg-gray-50">
-            <h2 class="text-sm font-black uppercase tracking-[0.3em]">Shopping Cart</h2>
-            <button onclick="toggleCart()" class="text-[10px] font-bold uppercase tracking-widest hover:text-red-500 transition italic">Close ×</button>
+    <div id="cart-overlay" class="fixed inset-0 bg-black/80 z-[70] hidden backdrop-blur-md" onclick="toggleCart()"></div>
+    <div id="cart-sidebar" class="fixed right-0 top-0 h-full w-full sm:w-[500px] bg-white z-[80] translate-x-full transition-transform duration-500 ease-in-out flex flex-col shadow-[-40px_0_100px_rgba(0,0,0,0.5)] border-l-[6px] md:border-l-[10px] border-black">
+        <div class="p-8 md:p-10 border-b flex justify-between items-center bg-white">
+            <h2 class="text-xl font-black uppercase tracking-tighter italic">Acquisition <span class="text-red-600">Log</span></h2>
+            <button onclick="toggleCart()" class="w-10 h-10 flex items-center justify-center border-2 border-black rounded-full hover:bg-black hover:text-white transition-all font-black">✕</button>
         </div>
-        <div id="cart-content" class="flex-grow p-8 overflow-y-auto"></div>
-        <div id="cart-checkout-section" class="p-8 border-t space-y-6 bg-white hidden">
+        <div id="cart-content" class="flex-grow p-8 md:p-10 overflow-y-auto"></div>
+        <div id="cart-checkout-section" class="p-8 md:p-10 border-t-2 border-black space-y-8 md:space-y-10 bg-gray-50 hidden">
             <div class="flex justify-between items-end">
                 <div>
-                    <span class="text-[11px] font-black uppercase tracking-widest">Total</span>
-                    <p class="text-[8px] font-bold uppercase text-black tracking-tighter mt-1">No refund policy applies</p>
+                    <span class="text-[11px] font-black uppercase tracking-[0.4em] text-gray-400">Total</span>
+                    <p class="text-[9px] font-black uppercase text-red-600 tracking-widest mt-2 underline">Secure Check Established</p>
                 </div>
-                <span id="cart-subtotal" class="text-3xl font-black"></span>
+                <span id="cart-subtotal" class="text-4xl md:text-5xl font-black tracking-tighter"></span>
             </div>
             <div id="paypal-button-container"></div>
         </div>
