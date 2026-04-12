@@ -108,6 +108,16 @@
                 image: 'Images/pr1.png',
                 desc: 'Precision-engineered tactile kinetic hardware. Designed for high-stress environments and mechanical engagement. Featuring a proprietary bolt-action mechanism.',
                 paypalId: '8AXZUDMVWU24E'
+            },
+            {
+                id: 'fidget-knife',
+                name: 'Tactical Fidget Knife',
+                category: 'EDC Hardware',
+                originalPrice: 35.00,
+                salePrice: 25.00,
+                image: 'Images/pr2.png',
+                desc: 'Aerodynamic kinetic blade. Engineered for fluid manipulation and rapid tactile feedback. Premium synthetic build for daily deployment.',
+                paypalId: 'VU9ZKV347QD84'
             }
         ];
 
@@ -274,7 +284,7 @@
                 const btnId = `paypal-container-${item.paypalId}`;
                 paypalContainer.innerHTML = `<div id="${btnId}" class="paypal-wrapper"></div>`;
                 
-                if (item.paypalId !== 'PENDING_ID' && window.paypal && window.paypal.HostedButtons) {
+                if (item.paypalId && window.paypal && window.paypal.HostedButtons) {
                     window.paypal.HostedButtons({
                         hostedButtonId: item.paypalId,
                     }).render(`#${btnId}`);
