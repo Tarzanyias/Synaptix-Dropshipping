@@ -100,34 +100,14 @@
     <script>
         const PRODUCTS = [
             {
-                id: 'airpods-pro',
-                name: 'Pro Hardware (AirPods)',
-                category: 'Audio Tech',
-                originalPrice: 165.00,
-                salePrice: 50.00,
-                image: 'Images/pr3.png',
-                desc: 'Premium wireless audio integration. High-fidelity sound with noise cancellation protocols. Engineered for seamless sync with your mobile hardware.',
-                paypalId: '8AXZUDMVWU24E'
-            },
-            {
-                id: 'jellyfish-humidifier',
-                name: 'Jellyfish Humidifier',
-                category: 'Home Tech',
-                originalPrice: 45.00,
-                salePrice: 34.99,
-                image: 'Images/pr1.png',
-                desc: 'Experience soothing moisture with a unique jellyfish smoke ring effect. Perfect for meditation, sleep, and creating a futuristic atmosphere.',
-                paypalId: 'KK8U7NW44WEBW'
-            },
-            {
-                id: 'ai-pen',
-                name: 'AI Pen',
-                category: 'AI Tech',
-                originalPrice: 128.00,
+                id: 'fidget-gun',
+                name: 'Tactical Fidget Gun',
+                category: 'EDC Hardware',
+                originalPrice: 50.00,
                 salePrice: 35.00,
-                image: 'Images/pr2.png',
-                desc: 'The ultimate smart writing companion. Featuring real-time transcription and cloud synchronization for all your handwritten notes.',
-                paypalId: 'PENDING_ID'
+                image: 'Images/pr1.png',
+                desc: 'Precision-engineered tactile kinetic hardware. Designed for high-stress environments and mechanical engagement. Featuring a proprietary bolt-action mechanism.',
+                paypalId: '8AXZUDMVWU24E'
             }
         ];
 
@@ -298,8 +278,6 @@
                     window.paypal.HostedButtons({
                         hostedButtonId: item.paypalId,
                     }).render(`#${btnId}`);
-                } else {
-                    paypalContainer.innerHTML = `<div class="p-6 bg-gray-50 text-[10px] font-black uppercase tracking-widest text-center text-gray-400 border-2 border-dashed border-gray-200 rounded-xl">Terminal Offline</div>`;
                 }
             }
             cartSubtotal.textContent = `$${total.toFixed(2)}`;
@@ -373,22 +351,19 @@
         <!-- Home Page -->
         <div id="home-page" class="page-view">
             <section class="min-h-[80vh] flex items-center px-6 py-12">
-                <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                    <div class="text-center lg:text-left">
+                <div class="max-w-7xl mx-auto w-full">
+                    <div class="text-center">
                         <div class="inline-flex items-center space-x-3 mb-8">
                             <span class="px-3 py-1 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest">Global Shipment</span>
                             <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Sale <span class="x-mark italic">X</span> Status</span>
                         </div>
-                        <h1 class="text-5xl md:text-8xl font-black tracking-tighter mb-8 leading-[0.85] uppercase">
+                        <h1 class="text-6xl md:text-9xl font-black tracking-tighter mb-8 leading-[0.85] uppercase">
                             Hardware<br>Archive.<br><span class="text-red-600 italic">Sale <span class="x-mark">X</span></span>
                         </h1>
-                        <p class="text-gray-400 max-w-md mx-auto lg:mx-0 mb-12 text-lg font-medium leading-relaxed">Secure premium tech infrastructure during Sale <span class="x-mark italic font-black">X</span>. Limited quantities of high-performance hardware available for immediate acquisition.</p>
-                        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 justify-center lg:justify-start">
-                            <button onclick="showPage('shop-all-page')" class="bg-black text-white px-12 py-6 font-black uppercase tracking-[0.2em] hover:bg-gray-800 transition shadow-[10px_10px_0px_rgba(0,0,0,0.1)] active:translate-y-1 active:shadow-none">Shop Now</button>
+                        <p class="text-gray-400 max-w-xl mx-auto mb-12 text-lg md:text-xl font-medium leading-relaxed">Secure premium tech infrastructure during Sale <span class="x-mark italic font-black">X</span>. Limited quantities of high-performance hardware available for immediate acquisition.</p>
+                        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 justify-center">
+                            <button onclick="showPage('shop-all-page')" class="bg-black text-white px-16 py-7 font-black uppercase tracking-[0.2em] hover:bg-gray-800 transition shadow-[15px_15px_0px_rgba(0,0,0,0.1)] active:translate-y-1 active:shadow-none">View Inventory</button>
                         </div>
-                    </div>
-                    <div class="relative hidden lg:block">
-                        <img src="Images/sh.png" onerror="handleImageError(this, 'Synaptix')" class="w-full h-auto drop-shadow-2xl grayscale hover:grayscale-0 transition-all duration-1000 scale-105">
                     </div>
                 </div>
             </section>
@@ -401,9 +376,6 @@
                     <h2 class="text-[11px] font-black uppercase tracking-[0.4em] mb-10 border-b-4 border-black pb-4">Categories</h2>
                     <div class="flex lg:flex-col gap-4 overflow-x-auto lg:overflow-visible pb-4 scrollbar-hide">
                         <button onclick="setFilter('All')" data-cat="All" class="filter-btn text-left text-[11px] uppercase font-black tracking-widest border-l-4 border-black pl-4 text-black whitespace-nowrap">All Items</button>
-                        <button onclick="setFilter('Audio Tech')" data-cat="Audio Tech" class="filter-btn text-left text-[11px] uppercase font-bold tracking-widest border-l-4 border-transparent pl-4 text-gray-400 hover:text-black whitespace-nowrap">Audio Protocol</button>
-                        <button onclick="setFilter('Home Tech')" data-cat="Home Tech" class="filter-btn text-left text-[11px] uppercase font-bold tracking-widest border-l-4 border-transparent pl-4 text-gray-400 hover:text-black whitespace-nowrap">Home Systems</button>
-                        <button onclick="setFilter('AI Tech')" data-cat="AI Tech" class="filter-btn text-left text-[11px] uppercase font-bold tracking-widest border-l-4 border-transparent pl-4 text-gray-400 hover:text-black whitespace-nowrap">AI Protocol</button>
                     </div>
                 </aside>
                 <div class="flex-grow">
