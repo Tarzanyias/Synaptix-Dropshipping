@@ -100,24 +100,14 @@
     <script>
         const PRODUCTS = [
             {
-                id: 'fidget-gun',
-                name: 'Tactical Fidget Gun',
-                category: 'EDC Hardware',
-                originalPrice: 50.00,
-                salePrice: 35.00,
+                id: 'essential-humidifier',
+                name: 'Essential Oil Humidifier',
+                category: 'Wellness Tech',
+                originalPrice: 49.99,
+                salePrice: 14.99,
                 image: 'Images/pr1.png',
-                desc: 'Precision-engineered tactile kinetic hardware. Designed for high-stress environments and mechanical engagement. Featuring a proprietary bolt-action mechanism.',
-                paypalId: '8AXZUDMVWU24E'
-            },
-            {
-                id: 'fidget-knife',
-                name: 'Tactical Fidget Knife',
-                category: 'EDC Hardware',
-                originalPrice: 35.00,
-                salePrice: 25.00,
-                image: 'Images/pr2.png',
-                desc: 'Aerodynamic kinetic blade. Engineered for fluid manipulation and rapid tactile feedback. Premium synthetic build for daily deployment.',
-                paypalId: 'VU9ZKV347QD84'
+                desc: 'Premium ultrasonic mist technology designed for home wellness. Disperses a fine, continuous mist with integrated essential oil diffusion for atmosphere optimization.',
+                paypalId: 'FH9MYHWQ3P65U'
             }
         ];
 
@@ -251,7 +241,7 @@
                 cartContent.innerHTML = `
                     <div class="flex flex-col items-center justify-center h-full py-20 text-center">
                         <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-6">
-                           <svg class="w-8 h-8 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                            <svg class="w-8 h-8 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                         </div>
                         <p class="text-[10px] font-black uppercase tracking-[0.3em] text-gray-300">Cart Empty</p>
                     </div>`;
@@ -440,7 +430,7 @@
     <footer class="bg-black text-white py-24 px-6 mt-32 border-t-[10px] border-red-600">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-20">
             <div class="md:col-span-2">
-                <img src="Images/logo.png" class="h-6 mb-10 invert grayscale brightness-200">
+                <img src="Images/logo.png" class="h-6 mb-10 invert grayscale brightness-200" onerror="this.src='https://via.placeholder.com/150x40?text=SYNAPTIX'">
                 <p class="text-gray-500 text-xs max-w-sm leading-relaxed uppercase tracking-widest font-black">Official Synaptix Terminal. All rights restricted.</p>
             </div>
             <div>
